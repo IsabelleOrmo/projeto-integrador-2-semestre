@@ -1,6 +1,7 @@
 import express from "express";
 import {Request, Response, Router} from "express";
 import { AccountsHandler } from "./accounts/accounts";
+import { EventsHandler } from "./events/events";
 import OracleDB from 'oracledb';
 import dotenv from 'dotenv'; 
 
@@ -26,6 +27,7 @@ app.use(express.json())
 
 routes.post('/login',AccountsHandler.loginHandler);
 routes.post('/singUp', AccountsHandler.singUpHandler);
+routes.post('/addNewEvent', EventsHandler.addNewEventHandler);
 
 app.use(routes);
 

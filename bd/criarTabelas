@@ -41,16 +41,20 @@ CREATE TABLE USUARIOS (
     PRIMARY KEY (id_usuario)
 );
 
-CREATE TABLE EVENTO (
-    id_evento INT AUTO_INCREMENT,
+DROP TABLE EVENTS;
+DROP SEQUENCE SEQ_EVENTS;
+CREATE TABLE EVENTS (
+    id_evento INTEGER NOT NULL PRIMARY KEY,
     id_usuario INT NOT NULL,
-    titulo VARCHAR(50) NOT NULL,
-    descricao VARCHAR(150) NOT NULL, 
+    titulo VARCHAR2(50) NOT NULL,
+    descricao VARCHAR2(150) NOT NULL, 
     valor_cota FLOAT NOT NULL,
-    data_hora_inicio DATETIME NOT NULL,
-    data_hora_fim DATETIME NOT NULL,
-    data_evento DATE NOT NULL,
-    status_evento VARCHAR(45) NOT NULL,
-    PRIMARY KEY (id_evento),
-    FOREIGN KEY (id_usuario) REFERENCES USUARIOS(id_usuario)
+    data_hora_inicio VARCHAR2(20) NOT NULL,  
+    data_hora_fim VARCHAR2(20) NOT NULL,      
+    data_evento VARCHAR2(10) NOT NULL,       
+    status_evento VARCHAR2(45) DEFAULT 'Pendente' NOT NULL,
+    FOREIGN KEY (id_usuario) REFERENCES ACCOUNTS(ID)
 );
+
+CREATE SEQUENCE SEQ_EVENTS START WITH 1 INCREMENT BY 1;
+
