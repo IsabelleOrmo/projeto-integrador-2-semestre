@@ -66,9 +66,10 @@ export namespace EventsHandler {
             `INSERT INTO EVENTS (ID_EVENTO, ID_USUARIO, TITULO, DESCRICAO, VALOR_COTA, DATA_HORA_INICIO, DATA_HORA_FIM, DATA_EVENTO) 
             VALUES (SEQ_EVENTS.NEXTVAL, :id_usuario, :titulo, :descricao, :valor_cota, :data_hora_inicio, :data_hora_fim, :data_evento)`,
             [id_usuario, titulo, descricao, valor_cota, data_hora_inicio, data_hora_fim, data_evento],
-            { autoCommit: true }
+            
         );
 
+        await connection.commit();
         await connection.close();
     }
 

@@ -18,6 +18,7 @@ export namespace AccountsHandler {
         email:string;
         password:string | undefined;
     };
+    
 
     async function login(email: string, password: string) {
 
@@ -37,22 +38,53 @@ export namespace AccountsHandler {
 
         await connection.close();
 
-        console.log(accounts.rows)
+        return accounts.rows;
     }
 
-    export const loginHandler: RequestHandler = async (req: Request, res: Response) => {
-        const { email: pEmail, password: pPassword } = req.body; // Aqui você pode desestruturar diretamente
+    async function verifyRole(email: string) {
+        OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
+    
+        let connection = await OracleDB.getConnection({
+            user: process.env.ORACLE_USER,
+            password: process.env.ORACLE_PASSWORD,
+            connectString: process.env.ORACLE_CONN_STR
+        });
+    
+        // Define o formato esperado para a linha da consulta
+        let verify = await connection.execute<{ ISADM: number }>(
+            `SELECT ISADM FROM ACCOUNTS WHERE EMAIL = :email`,
+            [email]
+        );
+    
+        await connection.close();
+    
+        // Verificação para que o retorno da verificação nao seja vazio
+        if (verify.rows && verify.rows.length > 0) {
+            // percorre e retorna o array com apenas o numero
+            let emptyRole = verify.rows.map((row) => row.ISADM); 
+            return emptyRole; 
+        } else {
+            return []; 
+        }
+    }
+    
+    
 
-        console.log(pEmail, pPassword); 
+    export const loginHandler: RequestHandler = async (req: Request, res: Response) => {
+        const { email: pEmail, password: pPassword } = req.body; 
+    
         if (pEmail && pPassword) {
             try {
-                const result = await login(pEmail, pPassword); 
-                if (Array.isArray(result)) {
-                    res.statusCode = 200;
-                    res.send('Login realizado... confira...');
+                const role = await verifyRole(pEmail);
+                if (role.includes(1)) { // Verifica se o role contém 1
+                    const result = await login(pEmail, pPassword); 
+                    if (Array.isArray(result) && result) { // Se houver resultado da função login
+                        res.status(200).send('Login realizado... confira...');
+                    } else {
+                        res.status(404).send('Email ou senha não encontrados. Não tem conta? Cadastre-se.');
+                    }
                 } else {
-                    res.statusCode = 404;
-                    res.send('Email ou senha não encontrados. Não tem conta? Cadastre-se.');
+                    res.status(404).send('Email ou senha não encontrados. Não tem conta? Cadastre-se.');
                 }
             } catch (error) {
                 console.error('Erro ao realizar login:', error);
@@ -62,8 +94,9 @@ export namespace AccountsHandler {
             res.status(400).send('Requisição inválida - Parâmetros faltando.'); 
         }
     };
+    
 
-        async function verifyAccounts(email: string) {
+        async function verifyEmail(email: string) {
             OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
         
             let connection = await OracleDB.getConnection({
@@ -97,9 +130,11 @@ export namespace AccountsHandler {
                     `INSERT INTO ACCOUNTS (ID, EMAIL, PASSWORD, COMPLETE_NAME, TOKEN) 
                     VALUES (SEQ_ACCOUNTS.NEXTVAL, :email, :password, :completeName, dbms_random.string('x', 32))`,
                     [email, password, completeName],
-                    { autoCommit: true }
+                    
                 );
             
+            await connection.commit();
+
             await connection.close();
         
         }
@@ -109,7 +144,7 @@ export namespace AccountsHandler {
         async (req: Request, res: Response) => {
             const { completeName, email, password } = req.body;
             if (completeName && email && password) {
-                const verify = await verifyAccounts(email);
+                const verify = await verifyEmail(email);
                     if( Array.isArray(verify) && verify.length>0){
                         res.statusCode = 400;
                         res.send('Email já cadastrado');
