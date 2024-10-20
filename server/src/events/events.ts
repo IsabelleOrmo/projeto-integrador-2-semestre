@@ -92,6 +92,26 @@ export namespace EventsHandler {
         await connection.close();
     }
 
+    async function getEvents(status:string) {
+        OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
+
+        const connection = await OracleDB.getConnection({
+            user: process.env.ORACLE_USER,
+            password: process.env.ORACLE_PASSWORD,
+            connectString: process.env.ORACLE_CONN_STR
+        });
+
+        let events  = await connection.execute(
+            `SELECT * FROM EVENTS WHERE STATUS_EVENTO = :status`,
+            [status],
+            
+        );
+
+        await connection.close();
+
+        return events.rows;
+    }
+
     export const addNewEventHandler: RequestHandler = async (req: Request, res: Response) => {
         const token = req.get('token');
         const { titulo, descricao, valor_cota, data_hora_inicio, data_hora_fim, data_evento } = req.body;
@@ -128,15 +148,15 @@ export namespace EventsHandler {
         const id_evento = req.get("id_evento");
         
         const { status } = req.body;
-        var statusU = status.toUpperCase( );
+        var statusUpper = status.toUpperCase( );
 
-        if(!id_evento || !statusU ){
+        if(!id_evento || !statusUpper ){
             res.status(400).send('Requisição inválida - Parâmetros faltando.');
             return;
         } else {
             try {
                 const eventoId = parseInt(id_evento, 10); // tranforma em number
-                await evaluateNewEvent(eventoId, statusU);
+                await evaluateNewEvent(eventoId, statusUpper);
                 res.status(200).send('Status do evento alterado.'); 
             } catch (error) {
                 console.error('Erro ao adicionar evento:', error);
@@ -144,5 +164,26 @@ export namespace EventsHandler {
             } 
         }
     }
+
+    export const getEventsHandler: RequestHandler = async (req: Request, res: Response) =>{
+        const { status } = req.body;
+        if(status){
+            try {
+                var statusUpper = status.toUpperCase( );
+                let events = await getEvents(statusUpper);
+                if(Array.isArray(events) && events.length>0){
+                    res.status(200).json(events);
+                } else {
+                res.status(404).send('Eventos não encontrados');
+                }
+            } catch (error) {
+                console.error('Erro ao adicionar evento:', error);
+                res.status(500).send('Erro ao criar evento.');
+            }
+        } else {
+            res.status(400).send('Requisição inválida - Parâmetros faltando.');
+            return;
+        }
+    } 
     
 }

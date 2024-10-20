@@ -29,7 +29,7 @@ routes.post('/login',AccountsHandler.loginHandler);
 routes.post('/singUp', AccountsHandler.singUpHandler);
 routes.post('/addNewEvent', EventsHandler.addNewEventHandler);
 routes.patch('/evaluateNewEvent', EventsHandler.evaluateNewEventHandler);
-
+routes.get('/getEvents', EventsHandler.getEventsHandler);
 
 app.use(routes);
 
