@@ -41,7 +41,7 @@ CREATE TABLE EVENTS (
     data_hora_inicio VARCHAR2(20) NOT NULL,  
     data_hora_fim VARCHAR2(20) NOT NULL,      
     data_evento VARCHAR2(10) NOT NULL,       
-    status_evento VARCHAR2(45) DEFAULT 'Pendente' NOT NULL,
+    status_evento VARCHAR2(45) DEFAULT 'PENDENTE' NOT NULL,
     FOREIGN KEY (id_usuario) REFERENCES ACCOUNTS(ID)
 );
 

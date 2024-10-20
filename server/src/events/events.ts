@@ -73,26 +73,76 @@ export namespace EventsHandler {
         await connection.close();
     }
 
+    async function evaluateNewEvent(id_evento: number, status: string) {
+        OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
+
+        const connection = await OracleDB.getConnection({
+            user: process.env.ORACLE_USER,
+            password: process.env.ORACLE_PASSWORD,
+            connectString: process.env.ORACLE_CONN_STR
+        });
+
+        await connection.execute(
+            `UPDATE EVENTS SET STATUS_EVENTO = :status WHERE ID_EVENTO = :id_evento`,
+            [status, id_evento],
+            
+        );
+
+        await connection.commit();
+        await connection.close();
+    }
+
     export const addNewEventHandler: RequestHandler = async (req: Request, res: Response) => {
         const token = req.get('token');
         const { titulo, descricao, valor_cota, data_hora_inicio, data_hora_fim, data_evento } = req.body;
+    
         
-        if (typeof token === 'string') {
+        if (typeof token !== 'string') {
+            res.status(400).send('Requisição inválida - tente logar novamente.');
+            return; 
+        }
+    
+        if (!titulo || !descricao || !valor_cota || !data_evento || !data_hora_inicio || !data_hora_fim) {
+            res.status(400).send('Requisição inválida - Parâmetros faltando.');
+            return; 
+        }
+    
+        try {
+            const id_usuario = await userId(token);
+    
+            if (id_usuario === null) {
+                res.status(401).send('Acesso não permitido. Tente logar novamente.');
+                return;
+            }
+    
+            await addNewEvent(id_usuario, titulo, descricao, valor_cota, data_hora_inicio, data_hora_fim, data_evento);
+            res.status(201).send('Evento criado com sucesso!'); 
+    
+        } catch (error) {
+            console.error('Erro ao adicionar evento:', error);
+            res.status(500).send('Erro ao criar evento.'); 
+        }
+    }
+
+    export const evaluateNewEventHandler: RequestHandler = async (req: Request, res: Response) =>{
+        const id_evento = req.get("id_evento");
+        
+        const { status } = req.body;
+        var statusU = status.toUpperCase( );
+
+        if(!id_evento || !statusU ){
+            res.status(400).send('Requisição inválida - Parâmetros faltando.');
+            return;
+        } else {
             try {
-                const id_usuario = await userId(token);
-                console.log(id_usuario);
-                if (id_usuario !== null) { 
-                    await addNewEvent(id_usuario, titulo, descricao, valor_cota, data_hora_inicio, data_hora_fim, data_evento);
-                    res.status(200).send('Evento Criado!'); 
-                } else {
-                    res.status(401).send('Token inválido ou usuário não encontrado.');
-                }
+                const eventoId = parseInt(id_evento, 10); // tranforma em number
+                await evaluateNewEvent(eventoId, statusU);
+                res.status(200).send('Status do evento alterado.'); 
             } catch (error) {
                 console.error('Erro ao adicionar evento:', error);
-                res.status(500).send('Erro ao criar evento.'); 
-            }
-        } else {
-            res.status(400).send('Token inválido.');
+                res.status(500).send('Erro ao criar evento.');
+            } 
         }
-    };
+    }
+    
 }

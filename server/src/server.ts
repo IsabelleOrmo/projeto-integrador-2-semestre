@@ -28,6 +28,8 @@ app.use(express.json())
 routes.post('/login',AccountsHandler.loginHandler);
 routes.post('/singUp', AccountsHandler.singUpHandler);
 routes.post('/addNewEvent', EventsHandler.addNewEventHandler);
+routes.patch('/evaluateNewEvent', EventsHandler.evaluateNewEventHandler);
+
 
 app.use(routes);
 
