@@ -112,6 +112,45 @@ export namespace EventsHandler {
         return events.rows;
     }
 
+    async function deleteEvent(id_evento: number) {
+        OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
+
+        const connection = await OracleDB.getConnection({
+            user: process.env.ORACLE_USER,
+            password: process.env.ORACLE_PASSWORD,
+            connectString: process.env.ORACLE_CONN_STR
+        });
+
+        await connection.execute(
+            `UPDATE EVENTS SET STATUS_EVENTO = 'EXCLUÍDO' WHERE ID_EVENTO = :id_evento`,
+            [id_evento],
+            
+        );
+
+        await connection.commit();
+        await connection.close();
+    }
+
+    async function eventExists(id_evento:number) {
+        OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
+
+        const connection = await OracleDB.getConnection({
+            user: process.env.ORACLE_USER,
+            password: process.env.ORACLE_PASSWORD,
+            connectString: process.env.ORACLE_CONN_STR
+        });
+
+        let events  = await connection.execute(
+            `SELECT * FROM EVENTS WHERE ID_EVENTO = :id_evento`,
+            [id_evento],
+            
+        );
+
+        await connection.close();
+
+        return events.rows;
+    }
+
     export const addNewEventHandler: RequestHandler = async (req: Request, res: Response) => {
         const token = req.get('token');
         const { titulo, descricao, valor_cota, data_hora_inicio, data_hora_fim, data_evento } = req.body;
@@ -185,5 +224,28 @@ export namespace EventsHandler {
             return;
         }
     } 
+
+    export const deleteEventHandler: RequestHandler = async (req: Request, res: Response) =>{
+        const id_evento = req.get("id_evento");
+
+        if(!id_evento){
+            res.status(400).send('Requisição inválida - Parâmetros faltando.');
+            return;
+        } else {
+            try {
+                const eventoId = parseInt(id_evento, 10); // tranforma em number
+                let existe = eventExists(eventoId);
+                if(Array.isArray(existe) && existe.length>0){
+                    await deleteEvent(eventoId);
+                    res.status(200).send('Evento excluído.'); 
+                } else {
+                    res.status(404).send('Evento não encontrado.'); 
+                }  
+            } catch (error) {
+                console.error('Erro ao adicionar evento:', error);
+                res.status(500).send('Erro ao criar evento.');
+            } 
+        }
+    }
     
 }
