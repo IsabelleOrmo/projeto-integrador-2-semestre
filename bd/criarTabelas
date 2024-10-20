@@ -38,13 +38,15 @@ CREATE TABLE EVENTS (
     titulo VARCHAR2(50) NOT NULL,
     descricao VARCHAR2(150) NOT NULL, 
     valor_cota FLOAT NOT NULL,
-    data_hora_inicio VARCHAR2(20) NOT NULL,  
-    data_hora_fim VARCHAR2(20) NOT NULL,      
-    data_evento VARCHAR2(10) NOT NULL,       
+    data_hora_inicio TIMESTAMP NOT NULL,  
+    data_hora_fim TIMESTAMP NOT NULL,     
+    data_evento DATE NOT NULL,      
     status_evento VARCHAR2(45) DEFAULT 'PENDENTE' NOT NULL,
     FOREIGN KEY (id_usuario) REFERENCES ACCOUNTS(ID)
 );
 
+
 CREATE SEQUENCE SEQ_EVENTS START WITH 1 INCREMENT BY 1;
+
 
 COMMIT;

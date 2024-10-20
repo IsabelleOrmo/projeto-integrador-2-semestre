@@ -53,26 +53,38 @@ export namespace EventsHandler {
         }
     }
     
-    async function addNewEvent(id_usuario: number, titulo: string, descricao: string, valor_cota: number, data_hora_inicio: string, data_hora_fim: string, data_evento: string) {
+    async function addNewEvent(
+        id_usuario: number, 
+        titulo: string, 
+        descricao: string, 
+        valor_cota: number, 
+        data_hora_inicio: string, 
+        data_hora_fim: string, 
+        data_evento: string
+    ) {
         OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
-
+    
         const connection = await OracleDB.getConnection({
             user: process.env.ORACLE_USER,
             password: process.env.ORACLE_PASSWORD,
             connectString: process.env.ORACLE_CONN_STR
         });
-
+    
         await connection.execute(
             `INSERT INTO EVENTS (ID_EVENTO, ID_USUARIO, TITULO, DESCRICAO, VALOR_COTA, DATA_HORA_INICIO, DATA_HORA_FIM, DATA_EVENTO) 
-            VALUES (SEQ_EVENTS.NEXTVAL, :id_usuario, :titulo, :descricao, :valor_cota, :data_hora_inicio, :data_hora_fim, :data_evento)`,
-            [id_usuario, titulo, descricao, valor_cota, data_hora_inicio, data_hora_fim, data_evento],
-            
+             VALUES (SEQ_EVENTS.NEXTVAL, :id_usuario, :titulo, :descricao, :valor_cota, 
+             TO_DATE(:data_hora_inicio, 'yyyy/mm/dd hh24:mi:ss'), 
+             TO_DATE(:data_hora_fim, 'yyyy/mm/dd hh24:mi:ss'), 
+             TO_DATE(:data_evento, 'YYYY-MM-DD'))`,
+            [id_usuario, titulo, descricao, valor_cota, data_hora_inicio, data_hora_fim, data_evento]
         );
-
+        
+        
+    
         await connection.commit();
         await connection.close();
     }
-
+    
     async function evaluateNewEvent(id_evento: number, status: string) {
         OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
 
@@ -101,10 +113,22 @@ export namespace EventsHandler {
             connectString: process.env.ORACLE_CONN_STR
         });
 
-        let events  = await connection.execute(
-            `SELECT * FROM EVENTS WHERE STATUS_EVENTO = :status`,
+        let events = await connection.execute(
+            `SELECT 
+                id_evento, 
+                id_usuario, 
+                titulo, 
+                descricao, 
+                valor_cota, 
+                TO_CHAR(data_hora_inicio, 'YYYY-MM-DD HH24:MI:SS') AS data_hora_inicio, 
+                TO_CHAR(data_hora_fim, 'YYYY-MM-DD HH24:MI:SS') AS data_hora_fim, 
+                TO_CHAR(data_evento, 'YYYY-MM-DD') AS data_evento, 
+                status_evento 
+            FROM 
+                EVENTS 
+            WHERE 
+                STATUS_EVENTO = :status`,
             [status],
-            
         );
 
         await connection.close();
