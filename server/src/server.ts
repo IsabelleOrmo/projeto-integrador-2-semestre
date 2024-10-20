@@ -31,6 +31,8 @@ routes.post('/addNewEvent', EventsHandler.addNewEventHandler);
 routes.patch('/evaluateNewEvent', EventsHandler.evaluateNewEventHandler);
 routes.get('/getEvents', EventsHandler.getEventsHandler);
 routes.patch('/deleteEvent', EventsHandler.deleteEventHandler);
+routes.get('/searchEvent', EventsHandler.searchEventHandler);
+
 app.use(routes);
 
 app.listen(port, ()=>{

@@ -175,6 +175,42 @@ export namespace EventsHandler {
         return events.rows;
     }
 
+    async function searchEvent(keywords: string) {
+        OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
+    
+        const connection = await OracleDB.getConnection({
+            user: process.env.ORACLE_USER,
+            password: process.env.ORACLE_PASSWORD,
+            connectString: process.env.ORACLE_CONN_STR
+        });
+
+        const keyword = `%${keywords}%`;
+    
+        let events = await connection.execute(
+            `SELECT 
+                id_evento, 
+                id_usuario, 
+                titulo, 
+                descricao, 
+                valor_cota, 
+                TO_CHAR(data_hora_inicio, 'YYYY-MM-DD HH24:MI:SS') AS data_hora_inicio, 
+                TO_CHAR(data_hora_fim, 'YYYY-MM-DD HH24:MI:SS') AS data_hora_fim, 
+                TO_CHAR(data_evento, 'YYYY-MM-DD') AS data_evento, 
+                status_evento 
+            FROM 
+                EVENTS 
+            WHERE 
+                descricao LIKE :keywords AND status_evento = 'APROVADO'`,
+            [keyword]
+        );
+    
+        await connection.close();
+    
+        return events.rows;
+    }
+    
+    
+
     export const addNewEventHandler: RequestHandler = async (req: Request, res: Response) => {
         const token = req.get('token');
         const { titulo, descricao, valor_cota, data_hora_inicio, data_hora_fim, data_evento } = req.body;
@@ -241,7 +277,7 @@ export namespace EventsHandler {
                 }
             } catch (error) {
                 console.error('Erro ao adicionar evento:', error);
-                res.status(500).send('Erro ao criar evento.');
+                res.status(500).send('Erro ao buscar evento.');
             }
         } else {
             res.status(400).send('Requisição inválida - Parâmetros faltando.');
@@ -267,9 +303,30 @@ export namespace EventsHandler {
                 }  
             } catch (error) {
                 console.error('Erro ao adicionar evento:', error);
-                res.status(500).send('Erro ao criar evento.');
+                res.status(500).send('Erro ao deletar evento.');
             } 
         }
     }
+
+    export const searchEventHandler: RequestHandler = async (req: Request, res: Response) =>{
+        const { keywords } = req.body;
+        if(keywords){
+            try {
+                let events = await searchEvent(keywords);
+                if(Array.isArray(events) && events.length>0){
+                    res.status(200).json(events);
+                } else {
+                res.status(404).send('Eventos não encontrados');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                res.status(500).send('Erro ao buscar evento.');
+            }
+        } else {
+            res.status(400).send('Requisição inválida - Parâmetros faltando.');
+            return;
+        }
+    } 
+
     
 }
