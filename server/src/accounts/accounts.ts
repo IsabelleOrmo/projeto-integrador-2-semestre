@@ -81,7 +81,7 @@ export namespace AccountsHandler {
                     if (Array.isArray(result) && result) { // Se houver resultado da função login
                         res.status(200).send('Login realizado... confira...');
                     } else {
-                        res.status(404).send('Email ou senha não encontrados. Não tem conta? Cadastre-se.');
+                        res.status(200).send('Bem-vindo administrador');
                     }
                 } else {
                     res.status(404).send('Email ou senha não encontrados. Não tem conta? Cadastre-se.');
