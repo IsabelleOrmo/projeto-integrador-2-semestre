@@ -8,7 +8,16 @@ export namespace WalletHandler {
     export type Wallet = {
         id_carteira: number | undefined; 
         id_usuario: number;            
-        valor: number          
+        valor: number;        
+    };
+
+    export type Transacao = {
+        id_transacao: number | undefined; 
+        id_usuario: number;
+        id_evento: number;               
+        valor: number;
+        tipo: string;
+        data_transacao: string;
     };
 
     interface Account {
@@ -46,7 +55,7 @@ export namespace WalletHandler {
         }
     }
 
-    async function addFunds(id_usuario: number, valor: number) {
+    async function addFunds(id_usuario: number, valor: number, ) {
         OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
     
         const connection = await OracleDB.getConnection({
@@ -60,9 +69,13 @@ export namespace WalletHandler {
              VALUES (SEQ_CARTEIRA.NEXTVAL, :id_usuario, :valor`,
             [id_usuario, valor]
         );
-        
-        
-    
+
+        await connection.execute( 
+            `INSERT INTO TRANSACAO (ID_TRANSACAO, ID_USUARIO, VALOR, TIPO, DATA_TRANSACAO) 
+            VALUES (SEQ_TRANSACAO.NEXTVAL, :id_usuario, :valor, "DEPÓSITO", SYSDATE`,
+           [id_usuario, valor]
+        );
+
         await connection.commit();
         await connection.close();
     }
