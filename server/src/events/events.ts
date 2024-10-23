@@ -481,8 +481,7 @@ export namespace EventsHandler {
             } else {
                 res.status(403).send('Acesso negado'); 
             }
-    }
-            
+    }          
 
     export const searchEventHandler: RequestHandler = async (req: Request, res: Response) =>{
         const { keywords } = req.body;
@@ -492,7 +491,7 @@ export namespace EventsHandler {
                 if(Array.isArray(events) && events.length>0){
                     res.status(200).json(events);
                 } else {
-                res.status(404).send('Eventos não encontrados');
+                    res.status(404).send('Eventos não encontrados');
                 }
             } catch (error) {
                 console.error('Erro:', error);

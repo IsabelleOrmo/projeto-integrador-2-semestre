@@ -25,7 +25,7 @@ app.use(express.json())
 // vamos organizar as rotas em outro local 
 // login...
 
-routes.post('/login',AccountsHandler.loginHandler);
+routes.post('/login', AccountsHandler.loginHandler);
 routes.post('/singUp', AccountsHandler.singUpHandler);
 routes.post('/addNewEvent', EventsHandler.addNewEventHandler);
 routes.patch('/evaluateNewEvent', EventsHandler.evaluateNewEventHandler);

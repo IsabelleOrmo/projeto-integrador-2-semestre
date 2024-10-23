@@ -69,23 +69,23 @@ export namespace AccountsHandler {
     }
     
     
-
+// arrumar verificação de senha
     export const loginHandler: RequestHandler = async (req: Request, res: Response) => {
         const { email: pEmail, password: pPassword } = req.body; 
     
         if (pEmail && pPassword) {
             try {
                 const role = await verifyRole(pEmail);
-                if (role.includes(1)) { // Verifica se o role contém 1
-                    const result = await login(pEmail, pPassword); 
-                    if (Array.isArray(result) && result) { // Se houver resultado da função login
-                        res.status(200).send('Login realizado... confira...');
+                    const result =  await login(pEmail, pPassword); 
+                    if (Array.isArray(result) && result.length>0) {  // Se houver resultado da função login
+                        if (role.includes(1)) { // Verifica se o role contém 1
+                            res.status(200).send('Login realizado... confira...');
+                        } else {
+                            res.status(200).send('Bem-vindo administrador');
+                        }
                     } else {
-                        res.status(200).send('Bem-vindo administrador');
+                        res.status(404).send('Email ou senha não encontrados. Não tem conta? Cadastre-se.');
                     }
-                } else {
-                    res.status(404).send('Email ou senha não encontrados. Não tem conta? Cadastre-se.');
-                }
             } catch (error) {
                 console.error('Erro ao realizar login:', error);
                 res.status(500).send('Erro ao realizar login.'); 
@@ -145,7 +145,7 @@ export namespace AccountsHandler {
             const { completeName, email, password } = req.body;
             if (completeName && email && password) {
                 const verify = await verifyEmail(email);
-                    if( Array.isArray(verify) && verify.length>0){
+                    if(Array.isArray(verify) && verify.length>0){
                         res.statusCode = 400;
                         res.send('Email já cadastrado');
                     } else {
@@ -157,8 +157,8 @@ export namespace AccountsHandler {
                             res.status(500).send('Erro ao realizar cadastro.'); 
                         }
                     }
-                    }  else {
-                        res.status(400).send('Requisição inválida - Parâmetros faltando.'); 
-                    }
+            }  else {
+                res.status(400).send('Requisição inválida - Parâmetros faltando.'); 
+            }
         }
 }
