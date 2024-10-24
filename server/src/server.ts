@@ -36,7 +36,7 @@ routes.get('/finishedEvents', EventsHandler.getFinishedEventsHandler);
 routes.patch('/deleteEvent', EventsHandler.deleteEventHandler);
 routes.get('/searchEvent', EventsHandler.searchEventHandler);
 routes.patch('/addFunds', WalletHandler.addFundsHandler);
-
+routes.patch('/withdrawFunds', WalletHandler.withdrawFundsHandler);
 app.use(routes);
 
 app.listen(port, ()=>{
