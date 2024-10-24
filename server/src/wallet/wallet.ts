@@ -55,7 +55,7 @@ export namespace WalletHandler {
         }
     }
 
-    async function addFunds(id_usuario: number, valor: number, ) {
+    async function addFunds(id_usuario: number, valor: number) {
         OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
     
         const connection = await OracleDB.getConnection({
@@ -65,19 +65,51 @@ export namespace WalletHandler {
         });
     
         await connection.execute(
-            `INSERT INTO CARTEIRA (ID_CARTEIRA, ID_USUARIO, VALOR) 
-             VALUES (SEQ_CARTEIRA.NEXTVAL, :id_usuario, :valor`,
+            `UPDATE CARTEIRA SET VALOR = :valor 
+             WHERE ID_USUARIO = :id_usuario`, 
+            [valor, id_usuario]
+        );
+    
+        await connection.execute(
+            `INSERT INTO TRANSACAO (ID_TRANSACAO, ID_USUARIO, VALOR, TIPO, DATA_TRANSACAO) 
+             VALUES (SEQ_TRANSACAO.NEXTVAL, :id_usuario, :valor, 'DEPÓSITO', SYSDATE)`,  
             [id_usuario, valor]
         );
-
-        await connection.execute( 
-            `INSERT INTO TRANSACAO (ID_TRANSACAO, ID_USUARIO, VALOR, TIPO, DATA_TRANSACAO) 
-            VALUES (SEQ_TRANSACAO.NEXTVAL, :id_usuario, :valor, "DEPÓSITO", SYSDATE`,
-           [id_usuario, valor]
-        );
-
+    
         await connection.commit();
         await connection.close();
+    }    
+
+    export const addFundsHandler: RequestHandler = async (req: Request, res: Response) => {
+        const token = req.get('token');
+        const { valor } = req.body;
+    
+        
+        if (typeof token !== 'string') {
+            res.status(400).send('Requisição inválida - tente logar novamente.');
+            return; 
+        }
+    
+        if (!valor) {
+            res.status(400).send('Requisição inválida - Parâmetros faltando.');
+            return; 
+        }
+    
+        try {
+            const id_usuario = await userId(token);
+    
+            if (id_usuario === null) {
+                res.status(401).send('Acesso não permitido. Tente logar novamente.');
+                return;
+            }
+    
+            await addFunds(id_usuario, valor);
+            res.status(201).send('Valor adicionado.'); 
+    
+        } catch (error) {
+            console.error('Erro:', error);
+            res.status(500).send('Erro.'); 
+        }
     }
 
 }

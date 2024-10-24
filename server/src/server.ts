@@ -2,6 +2,7 @@ import express from "express";
 import {Request, Response, Router} from "express";
 import { AccountsHandler } from "./accounts/accounts";
 import { EventsHandler } from "./events/events";
+import { WalletHandler } from "./wallet/wallet";
 import OracleDB from 'oracledb';
 import dotenv from 'dotenv'; 
 
@@ -34,6 +35,7 @@ routes.get('/availableEvents', EventsHandler.getAvailableEventsHandler);
 routes.get('/finishedEvents', EventsHandler.getFinishedEventsHandler);
 routes.patch('/deleteEvent', EventsHandler.deleteEventHandler);
 routes.get('/searchEvent', EventsHandler.searchEventHandler);
+routes.patch('/addFunds', WalletHandler.addFundsHandler);
 
 app.use(routes);
 

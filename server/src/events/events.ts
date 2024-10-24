@@ -125,7 +125,6 @@ export namespace EventsHandler {
         );
         
         
-    
         await connection.commit();
         await connection.close();
     }

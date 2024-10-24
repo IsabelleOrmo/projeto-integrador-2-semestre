@@ -115,7 +115,30 @@ export namespace AccountsHandler {
             return verify.rows;
         }
 
-        async function singUp(completeName: string, email: string, password: string) {
+        async function singUp(completeName: string, email: string, password: string){
+
+            OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
+        
+            let connection = await OracleDB.getConnection({
+                user: process.env.ORACLE_USER,
+                password: process.env.ORACLE_PASSWORD,
+                connectString: process.env.ORACLE_CONN_STR
+            });
+        
+                await connection.execute(
+                    `INSERT INTO ACCOUNTS (ID, EMAIL, PASSWORD, COMPLETE_NAME, TOKEN) 
+                    VALUES (SEQ_ACCOUNTS.NEXTVAL, :email, :password, :completeName, dbms_random.string('x', 32))`,
+                    [email, password, completeName]
+                );
+        
+                
+                await connection.commit();
+                await connection.close();
+                
+        }
+        
+        
+        async function getId(email: string) {
         
             OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
         
@@ -125,18 +148,39 @@ export namespace AccountsHandler {
                 connectString: process.env.ORACLE_CONN_STR
             });
 
-            
-            let accounts = await connection.execute(
-                    `INSERT INTO ACCOUNTS (ID, EMAIL, PASSWORD, COMPLETE_NAME, TOKEN) 
-                    VALUES (SEQ_ACCOUNTS.NEXTVAL, :email, :password, :completeName, dbms_random.string('x', 32))`,
-                    [email, password, completeName],
-                    
-                );
-            
-            await connection.commit();
-
+            const result = await connection.execute<{ ID: number }>(
+                `SELECT ID FROM ACCOUNTS WHERE EMAIL = :email`,
+                [email]
+            );
+    
             await connection.close();
+
+            if (result.rows && result.rows.length > 0) {
+                return result.rows[0].ID;
+            } else {
+                return undefined;
+            }
         
+        }
+
+        async function createWallet(id_usuario: number | undefined) {
+        
+            OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
+        
+            let connection = await OracleDB.getConnection({
+                user: process.env.ORACLE_USER,
+                password: process.env.ORACLE_PASSWORD,
+                connectString: process.env.ORACLE_CONN_STR
+            });
+
+            await connection.execute(
+                `INSERT INTO CARTEIRA (ID_CARTEIRA, ID_USUARIO) 
+                 VALUES (SEQ_CARTEIRA.NEXTVAL, :id_usuario)`,  
+                [id_usuario]  
+            );
+
+            await connection.commit();
+            await connection.close();
         }
         
 
@@ -151,6 +195,8 @@ export namespace AccountsHandler {
                     } else {
                         try {
                             await singUp(completeName, email, password);
+                            const id_usuario = await getId(email);
+                            await createWallet(id_usuario);
                             res.status(201).send('Cadastro realizado com sucesso!'); 
                         } catch (error) {
                             console.error('Erro ao realizar cadastro:', error);
