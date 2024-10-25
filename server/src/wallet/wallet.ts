@@ -65,10 +65,10 @@ export namespace WalletHandler {
         });
     
         await connection.execute(
-            `UPDATE CARTEIRA SET VALOR = :valor 
-             WHERE ID_USUARIO = :id_usuario`, 
-            [valor, id_usuario]
+            `UPDATE CARTEIRA SET VALOR = :valor WHERE ID_USUARIO = :id_usuario`, 
+            { valor, id_usuario } 
         );
+        
     
         await connection.execute(
             `INSERT INTO TRANSACAO (ID_TRANSACAO, ID_USUARIO, VALOR, TIPO, DATA_TRANSACAO) 
@@ -115,7 +115,7 @@ export namespace WalletHandler {
             connectString: process.env.ORACLE_CONN_STR
         });
 
-        const result = await connection.execute<{ valor_carteira: number }>(
+        const result = await connection.execute<{ VALOR: number }>(
             `SELECT VALOR FROM CARTEIRA WHERE ID_USUARIO = :id_usuario`,
             [id_usuario]
         );
@@ -123,7 +123,7 @@ export namespace WalletHandler {
         await connection.close();
 
         if (result.rows && result.rows.length > 0) {
-            return result.rows[0].valor_carteira;
+            return result.rows[0].VALOR;
         } else {
             return undefined;
         }
@@ -169,8 +169,8 @@ export namespace WalletHandler {
                 return;
             }
     
-            const valorTaxa = await valorComTaxa(valor); // Corrigido para usar await
-            const valorAtualCarteira = await getWalletFunds(id_usuario); // Corrigido para usar await
+            const valorTaxa = await valorComTaxa(valor); 
+            const valorAtualCarteira = await getWalletFunds(id_usuario); 
     
             if(!valorAtualCarteira){
                 res.status(400).send('Saldo insuficiente.');
@@ -215,7 +215,10 @@ export namespace WalletHandler {
                 return;
             }
     
-            await addFunds(id_usuario, valor);
+
+            const valorAtual = await getWalletFunds(id_usuario);
+            const valorTransacao = valorAtual + valor;
+            await addFunds(id_usuario, valorTransacao);
             res.status(201).send('Valor adicionado.'); 
     
         } catch (error) {

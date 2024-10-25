@@ -3,6 +3,7 @@ import {Request, Response, Router} from "express";
 import { AccountsHandler } from "./accounts/accounts";
 import { EventsHandler } from "./events/events";
 import { WalletHandler } from "./wallet/wallet";
+import { BetHandler } from "./bets/bets";
 import OracleDB from 'oracledb';
 import dotenv from 'dotenv'; 
 
@@ -37,6 +38,8 @@ routes.patch('/deleteEvent', EventsHandler.deleteEventHandler);
 routes.get('/searchEvent', EventsHandler.searchEventHandler);
 routes.patch('/addFunds', WalletHandler.addFundsHandler);
 routes.patch('/withdrawFunds', WalletHandler.withdrawFundsHandler);
+routes.post('/betOnEvent', BetHandler.betOnEventHandler);
+
 app.use(routes);
 
 app.listen(port, ()=>{

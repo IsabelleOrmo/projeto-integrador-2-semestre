@@ -61,7 +61,7 @@ CREATE TABLE APOSTA (
     tipo VARCHAR2(50) NOT NULL,
     data_hora TIMESTAMP NOT NULL,
     valor_retorno FLOAT,
-    decisao_aposta VARCHAR2(50) NOT NULL,
+    decisao_aposta VARCHAR2(50) DEFAULT 'EM ANDAMENTO' NOT NULL,
     FOREIGN KEY (id_usuario) REFERENCES ACCOUNTS(ID),
     FOREIGN KEY (id_evento) REFERENCES EVENTS(id_evento)   
 );
