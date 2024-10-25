@@ -3,7 +3,7 @@ import OracleDB from "oracledb";
 import dotenv from 'dotenv'; 
 dotenv.config();
 
-export namespace BetHandler {
+export namespace ClosingBetsHandler {
 
     export type Bet = {
         id_aposta: number | undefined; 
@@ -29,7 +29,7 @@ export namespace BetHandler {
     }
     
 
-    async function userId(email: string): Promise<number | null> {
+    async function userId(token: string): Promise<number | null> {
         OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
 
         const connection = await OracleDB.getConnection({
@@ -40,8 +40,8 @@ export namespace BetHandler {
 
         try {
             const result = await connection.execute(
-                `SELECT ID FROM ACCOUNTS WHERE EMAIL = :email`,
-                [email]
+                `SELECT ID FROM ACCOUNTS WHERE TOKEN = :token`,
+                [token]
             );
 
             const rows = result.rows as Account[];
@@ -59,7 +59,7 @@ export namespace BetHandler {
         }
     }  
 
-    async function valorApostado(id_usuario: number, id_evento: number, valor: number) {
+    async function updateCarteira(id_usuario: number, id_evento: number, valor: number) {
         OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
     
         const connection = await OracleDB.getConnection({
@@ -127,7 +127,7 @@ export namespace BetHandler {
     
     }
 
-    async function betOnEvent(id_usuario: number, id_evento: number, cotas_qntd: number, tipo: string) {
+    async function finishEvent(id_evento: number, decisao_aposta: string) {
         OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
     
         const connection = await OracleDB.getConnection({
@@ -137,50 +137,110 @@ export namespace BetHandler {
         });
     
         await connection.execute(
-            `INSERT INTO APOSTA (ID_APOSTA, ID_USUARIO, ID_EVENTO, VALOR, TIPO, DATA_HORA) 
-             VALUES (SEQ_APOSTA.NEXTVAL, :id_usuario, :id_evento, :cotas_qntd, :tipo, SYSDATE)`,
-            [id_usuario, id_evento, cotas_qntd, tipo]
+            `UPDATE APOSTA SET DECISAO_APOSTA = :decisao_aposta WHERE ID_EVENTO = :id_evento`,
+            [decisao_aposta, id_evento]
         );
-        
-        
+
         await connection.execute(
-            `INSERT INTO TRANSACAO (ID_TRANSACAO, ID_USUARIO, ID_EVENTO, VALOR, TIPO, DATA_TRANSACAO) 
-             VALUES (SEQ_TRANSACAO.NEXTVAL, :id_usuario, :id_evento, :valor, 'APOSTA', SYSDATE)`,  
-            [id_usuario, id_evento, cotas_qntd]
+            `UPDATE EVENTS SET STATUS_EVENTO = 'FINALIZADO' WHERE ID_EVENTO = :id_evento`,
+            [id_evento]
         );
 
         await connection.commit();
         await connection.close();
     }
 
-    export const betOnEventHandler: RequestHandler = async (req: Request, res: Response) => {
-        const email = req.get('email');
-        const id_evento = req.get('id_evento');
-        const { cotas_qntd, tipo } = req.body;
-        var tipoUpper = tipo.toUpperCase( );
+    async function getDecisao(id_evento:number) {
+        OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
+    
+        let connection = await OracleDB.getConnection({
+            user: process.env.ORACLE_USER,
+            password: process.env.ORACLE_PASSWORD,
+            connectString: process.env.ORACLE_CONN_STR
+        });
+
+        const result = await connection.execute<{ DECISAO: string }>(
+            `SELECT DECISAO_APOSTA FROM APOSTA WHERE ID_EVENTO = :id_evento`,
+            [id_evento]
+        );
+
+        await connection.close();
+
+        if (result.rows && result.rows.length > 0) {
+            return result.rows[0].DECISAO;
+        } else {
+            return undefined;
+        }
+    }
+
+    async function getBet(id_evento:number, tipo: string) {
+        OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
+    
+        let connection = await OracleDB.getConnection({
+            user: process.env.ORACLE_USER,
+            password: process.env.ORACLE_PASSWORD,
+            connectString: process.env.ORACLE_CONN_STR
+        });
+
+        const result = await connection.execute(
+            `SELECT ID_USUARIO FROM APOSTA WHERE ID_EVENTO = :id_evento AND TIPO = :tipo`,
+            [id_evento, tipo]
+        );
+
+        await connection.close();
+
+        if (result.rows && result.rows.length > 0) {
+            return result.rows;
+        } else {
+            return undefined;
+        }
+    }
+
+    async function getAllBets(id_evento:number) {
+            OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
         
-        if (typeof email !== 'string') {
+            const connection = await OracleDB.getConnection({
+                user: process.env.ORACLE_USER,
+                password: process.env.ORACLE_PASSWORD,
+                connectString: process.env.ORACLE_CONN_STR
+            });
+        
+            const result = await connection.execute<Bet[]>(
+                `SELECT * FROM APOSTA WHERE ID_EVENTO = :id_evento`,
+                [id_evento]
+            );
+        
+            await connection.close();
+        
+            
+        if (result.rows && result.rows.length > 0) {
+            return result.rows;
+        } else {
+            return undefined;
+        }
+    }
+
+    export const finishEventHandler: RequestHandler = async (req: Request, res: Response) => {
+        const token = req.get('token');
+        const id_evento = req.get('id_evento');
+        const { decisao_aposta } = req.body;
+        var decisao_apostaUpper = decisao_aposta.toUpperCase( );
+        
+        if (typeof token !== 'string') {
             res.status(400).send('Requisição inválida - tente logar novamente.');
             return; 
         }
     
-        if (!cotas_qntd || cotas_qntd == 0 || !tipoUpper || !id_evento) {
+        if (!decisao_apostaUpper || !id_evento) {
             res.status(400).send('Requisição inválida - Parâmetros faltando.');
             return; 
         }
     
         try {
-            const id_usuario = await userId(email);
+            const id_usuario = await userId(token);
     
             if (id_usuario === null) {
                 res.status(401).send('Acesso não permitido. Tente logar novamente.');
-                return;
-            }
-    
-            const valorAtualCarteira = await getWalletFunds(id_usuario); 
-    
-            if(!valorAtualCarteira){
-                res.status(400).send('Saldo insuficiente.');
                 return;
             }
 
@@ -191,19 +251,37 @@ export namespace BetHandler {
                 res.status(400).send('Cota para o evento não encontrada.');
                 return;
             }
-            
-            const valor_final_aposta = cotas_qntd * cota;
-            
-            if (valorAtualCarteira < valor_final_aposta) {
-                res.status(400).send('Saldo insuficiente.');
-                return;
-            }            
 
+            const decisaoFinal = await getDecisao(eventoId);
+
+            if (!decisaoFinal) {
+                res.status(400).send('Decisão final para o evento não encontrada.');
+                return;
+            }
+
+            const winners = await getBet(eventoId, decisaoFinal);
+            const totalBets = await getAllBets(eventoId);
+            
+            if (!winners) {
+                res.status(400).send('Vencedores não encontrada.');
+                return;
+            }
+
+            for (let index = 0; index < winners.length; index++) {
+                const element = Number(winners[index]);
+                const valorAtualCarteira = await getWalletFunds(element); 
+    
+                if(valorAtualCarteira == null){
+                    res.status(404).send('Carteira não encontrada');
+                    return;
+                }
+
+
+                
+            }
+            
             const valor_carteira = valorAtualCarteira - valor_final_aposta;
             
-            await betOnEvent(id_usuario, eventoId, valor_final_aposta, tipoUpper);
-            await valorApostado(id_usuario, eventoId, valor_carteira);
-
             res.status(201).send('Aposta realizado com sucesso.'); 
     
         } catch (error) {
