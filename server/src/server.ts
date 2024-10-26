@@ -4,6 +4,7 @@ import { AccountsHandler } from "./accounts/accounts";
 import { EventsHandler } from "./events/events";
 import { WalletHandler } from "./wallet/wallet";
 import { BetHandler } from "./bets/bets";
+import { ClosingBetsHandler } from "./bets/closing";
 import OracleDB from 'oracledb';
 import dotenv from 'dotenv'; 
 
@@ -39,6 +40,7 @@ routes.get('/searchEvent', EventsHandler.searchEventHandler);
 routes.patch('/addFunds', WalletHandler.addFundsHandler);
 routes.patch('/withdrawFunds', WalletHandler.withdrawFundsHandler);
 routes.post('/betOnEvent', BetHandler.betOnEventHandler);
+routes.patch('/finishEvent', ClosingBetsHandler.finishEventHandler);
 
 app.use(routes);
 
