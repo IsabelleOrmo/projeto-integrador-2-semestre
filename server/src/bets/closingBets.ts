@@ -145,7 +145,7 @@ export namespace ClosingBetsHandler {
         });
     
         const result = await connection.execute<Bet>(
-            `SELECT * FROM APOSTA WHERE ID_EVENTO = :id_evento AND TIPO != :decisao_aposta`,
+            `SELECT * FROM APOSTA WHERE ID_EVENTO = :id_evento AND TIPO = :decisao_aposta`,
             [id_evento, decisao_aposta]
         );
     
@@ -218,28 +218,33 @@ export namespace ClosingBetsHandler {
                     }
                 }
 
-                let valorDistruibuido: number; 
+                
+                let valorDistruibuido = valorPerdedores; 
 
-                if (winners.length !== 0) {
-                    valorDistruibuido = valorPerdedores / winners.length; 
-                } else {
-                    valorDistruibuido = valorPerdedores; 
+                let valorTotal = 0; 
+
+                for (let index = 0; index < winners.length; index++) {
+                    const valorW = winners[index].VALOR;
+                    if (valorW !== undefined) {
+                        valorTotal = valorTotal + valorW;
+                    }
                 }
+
+                const valorTotalCotas = valorTotal/cota;
+                const valorPorCota = valorDistruibuido/valorTotalCotas;
 
                 for (let index = 0; index < winners.length; index++) {
                     const valor = winners[index].VALOR;
                     const id = winners[index].ID_USUARIO;
                     if (valor !== undefined) {
                         let qntdCota = valor/cota;
-                        const valorUp = valorDistruibuido*qntdCota;
-                        console.log(qntdCota);
+                        const valorUp = valorPorCota*qntdCota;
                         const currentlyWallet = await getWalletFunds(id);
                         if (!currentlyWallet) {
                             res.status(400).send('Requisição inválida - Parâmetros faltando.');
                             return; 
                         }
-                        const valorRetorno = currentlyWallet + valorUp;
-                        console.log(valorRetorno);
+                        const valorRetorno = currentlyWallet + valorUp + valor;
                         await updateCarteira(id, eventoId,valorRetorno);
                     }
                 }
@@ -247,11 +252,12 @@ export namespace ClosingBetsHandler {
             } else if (decisao_apostaUpper === 'SIM') {
                 const winners = await getWinners(eventoId, decisao_apostaUpper);
                 const losers = await getLosers(eventoId, 'NÃO');
-                if (!losers) {
+                if (!losers || !winners) {
                     res.status(400).send('Requisição inválida - Parâmetros faltando.');
                     return; 
                 }
                 let valorPerdedores = 0;
+
                 for (let index = 0; index < losers.length; index++) {
                     const valor = losers[index].VALOR;
                     if (valor !== undefined) {
@@ -259,24 +265,37 @@ export namespace ClosingBetsHandler {
                     }
                 }
 
-                const valorDistruibuido = valorPerdedores/winners.length;
+                
+                let valorDistruibuido = valorPerdedores; 
+
+                let valorTotal = 0; 
+
+                for (let index = 0; index < winners.length; index++) {
+                    const valorW = winners[index].VALOR;
+                    if (valorW !== undefined) {
+                        valorTotal = valorTotal + valorW;
+                    }
+                }
+
+                const valorTotalCotas = valorTotal/cota;
+                const valorPorCota = valorDistruibuido/valorTotalCotas;
 
                 for (let index = 0; index < winners.length; index++) {
                     const valor = winners[index].VALOR;
                     const id = winners[index].ID_USUARIO;
                     if (valor !== undefined) {
                         let qntdCota = valor/cota;
+                        const valorUp = valorPorCota*qntdCota;
                         const currentlyWallet = await getWalletFunds(id);
                         if (!currentlyWallet) {
                             res.status(400).send('Requisição inválida - Parâmetros faltando.');
                             return; 
                         }
-                        const valorRetorno = currentlyWallet + (valorDistruibuido*qntdCota);
+                        const valorRetorno = currentlyWallet + valorUp + valor;
                         await updateCarteira(id, eventoId,valorRetorno);
                     }
                 }
             }
-
             res.status(201).send('Evento finalizado e fundos distribuidos com sucesso.'); 
     
         } catch (error) {

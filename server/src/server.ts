@@ -4,7 +4,7 @@ import { AccountsHandler } from "./accounts/accounts";
 import { EventsHandler } from "./events/events";
 import { WalletHandler } from "./wallet/wallet";
 import { BetHandler } from "./bets/bets";
-import { ClosingBetsHandler } from "./bets/closing";
+import { ClosingBetsHandler } from "./bets/closingBets";
 import OracleDB from 'oracledb';
 import dotenv from 'dotenv'; 
 
