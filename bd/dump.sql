@@ -63,12 +63,9 @@ CREATE TABLE APOSTA (
     id_aposta INTEGER NOT NULL PRIMARY KEY,
     id_usuario INT NOT NULL,
     id_evento INT NOT NULL,
-    qntd_cota INT NOT NULL,
     valor FLOAT NOT NULL,
     tipo VARCHAR2(50) NOT NULL,
     data_hora TIMESTAMP NOT NULL,
-    valor_retorno FLOAT,
-    decisao_aposta VARCHAR2(50) DEFAULT 'EM ANDAMENTO' NOT NULL,
     FOREIGN KEY (id_usuario) REFERENCES ACCOUNTS(ID),
     FOREIGN KEY (id_evento) REFERENCES EVENTS(id_evento)   
 );
@@ -96,5 +93,20 @@ CREATE TABLE TRANSACAO (
 );
 
 CREATE SEQUENCE SEQ_TRANSACAO START WITH 1 INCREMENT BY 1;
+
+CREATE TABLE DADOS_BANCARIOS (
+    id_conta_bancaria INTEGER NOT NULL PRIMARY KEY,
+    banco VARCHAR2(100),
+    agencia VARCHAR2(20) ,
+    numero_conta VARCHAR2(20) ,
+    tipo_conta VARCHAR2(50),
+    chave_pix VARCHAR2(100),
+    nome_titular VARCHAR2(100) NOT NULL,
+    id_usuario INTEGER NOT NULL,
+    FOREIGN KEY (id_usuario) REFERENCES ACCOUNTS(ID)
+);
+
+CREATE SEQUENCE SEQ_DADOS_BANCARIOS START WITH 1 INCREMENT BY 1;
+
 
 COMMIT;
