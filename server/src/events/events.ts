@@ -178,7 +178,7 @@ export namespace EventsHandler {
         await connection.close();
     }
     
-    async function evaluateNewEvent(id_evento: number, status: string) {
+    async function evaluateNewEvent(id_evento: number, razao: string, status: string) {
         OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
 
         const connection = await OracleDB.getConnection({
@@ -188,8 +188,8 @@ export namespace EventsHandler {
         });
 
         await connection.execute(
-            `UPDATE EVENTS SET STATUS_EVENTO = :status WHERE ID_EVENTO = :id_evento`,
-            [status, id_evento],
+            `UPDATE EVENTS SET RAZAO = :razao, STATUS_EVENTO = :status WHERE ID_EVENTO = :id_evento AND STATUS_EVENTO = 'PENDENTE'`,
+            [razao, status, id_evento],
             
         );
 
@@ -313,6 +313,26 @@ export namespace EventsHandler {
         await connection.close();
     }
 
+    async function getEvent(id_evento: number) {
+        OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
+
+        const connection = await OracleDB.getConnection({
+            user: process.env.ORACLE_USER,
+            password: process.env.ORACLE_PASSWORD,
+            connectString: process.env.ORACLE_CONN_STR
+        });
+
+        let result = await connection.execute(
+            `SELECT * FROM EVENTS WHERE ID_EVENTO = :id_evento AND STATUS_EVENTO = 'PENDENTE'`,
+            [id_evento],
+        );
+
+        await connection.commit();
+        await connection.close();
+
+        return result.rows;
+    }
+
     async function eventExists(id_evento:number) {
         OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
 
@@ -417,7 +437,7 @@ export namespace EventsHandler {
 
         let role = await verifyRole(id_usuario);
 
-        const { status } = req.body;
+        const { status, razao } = req.body;
         var statusUpper = status.toUpperCase( );
 
         if(!id_evento || !statusUpper ){
@@ -427,11 +447,17 @@ export namespace EventsHandler {
             if(role.includes(2)){
                 try {
                     const eventoId = parseInt(id_evento, 10); // tranforma em number
-                    await evaluateNewEvent(eventoId, statusUpper);
+                    const evento = await getEvent(eventoId);
+                    console.log(evento);
+                    if(Array.isArray(evento) && evento.length===0){
+                        res.status(404).send('Evento não encontrado');
+                        return;
+                    }
+                    await evaluateNewEvent(eventoId, razao, statusUpper);
                     const idOwner = await getIdEventOwner(eventoId);
                 
                     if(!idOwner){
-                        res.status(404).send('Email nao encontrado');
+                        res.status(404).send('Email não encontrado');
                         return;
                     }
                     const email = await getEmail(idOwner);
@@ -440,7 +466,7 @@ export namespace EventsHandler {
                         const from: string = 'k1tk4tc4t@gmail.com';
                         const to: string = email;
                         const subject: string = 'EVENTO REPROVADO';
-                        const mailTemplate: string = 'Seu novo evento foi reprovado';
+                        const mailTemplate: string = razao;
                         sendMail(from, to, subject, mailTemplate);
                     } else if (!email) {
                         console.error("Email is undefined or invalid for user:", id_usuario);
@@ -449,7 +475,7 @@ export namespace EventsHandler {
                     res.status(200).send('Status do evento alterado.'); 
                 } catch (error) {
                     console.error('Erro ao adicionar evento:', error);
-                    res.status(500).send('Erro ao criar evento.');
+                    res.status(500).send('Erro ao mudar o status do evento evento.');
                 } 
             } else {
                 res.status(403).send('Acesso negado.');

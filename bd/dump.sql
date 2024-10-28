@@ -50,7 +50,8 @@ CREATE TABLE EVENTS (
     valor_cota FLOAT NOT NULL,
     data_hora_inicio TIMESTAMP NOT NULL,  
     data_hora_fim TIMESTAMP NOT NULL,     
-    data_evento DATE NOT NULL,      
+    data_evento DATE NOT NULL,
+    razao VARCHAR2(500),      
     status_evento VARCHAR2(45) DEFAULT 'PENDENTE' NOT NULL,
     decisao VARCHAR2(45),
     FOREIGN KEY (id_usuario) REFERENCES ACCOUNTS(ID)
