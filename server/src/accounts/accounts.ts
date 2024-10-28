@@ -17,6 +17,7 @@ export namespace AccountsHandler {
         completeName:string;
         email:string;
         password:string | undefined;
+        birthday: string;
     };
 
     interface Account {
@@ -119,7 +120,7 @@ export namespace AccountsHandler {
             return verify.rows;
         }
 
-        async function singUp(completeName: string, email: string, password: string){
+        async function singUp(completeName: string, email: string, password: string, birthday: string){
 
             OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
         
@@ -130,9 +131,9 @@ export namespace AccountsHandler {
             });
         
                 await connection.execute(
-                    `INSERT INTO ACCOUNTS (ID, EMAIL, PASSWORD, COMPLETE_NAME, TOKEN) 
-                    VALUES (SEQ_ACCOUNTS.NEXTVAL, :email, :password, :completeName, dbms_random.string('x', 32))`,
-                    [email, password, completeName]
+                    `INSERT INTO ACCOUNTS (ID, EMAIL, PASSWORD, COMPLETE_NAME, TOKEN, BIRTHDAY) 
+                    VALUES (SEQ_ACCOUNTS.NEXTVAL, :email, :password, :completeName, dbms_random.string('x', 32), TO_DATE(:birthday, 'YYYY-MM-DD'))`,
+                    [email, password, completeName, birthday]
                 );
         
                 
@@ -236,17 +237,38 @@ export namespace AccountsHandler {
                 return result.rows;
         }
         
+        async function validateBirthDate(inputDate: string): Promise <boolean> {
+            const currentDate = new Date();
+            const userDate = new Date(inputDate);
+        
+            if (isNaN(userDate.getTime()) || userDate > currentDate) {
+                return false;
+            }
+        
+            const minAgeDate = new Date();
+            minAgeDate.setFullYear(minAgeDate.getFullYear() - 18);
+            if (userDate > minAgeDate) {
+                return false;
+            }
+            
+            return true;
+        }
 
     export const singUpHandler: RequestHandler = async (req: Request, res: Response) => {
-            const { completeName, email, password } = req.body;
-            if (completeName && email && password) {
+            const { completeName, email, password, birthday } = req.body;
+            if (completeName && email && password && birthday ) {
+                const validacaoData = await validateBirthDate(birthday);
+                if(validacaoData==false){
+                    res.status(400).send('Você precisa ter no mínimo 18 anos para se cadastrar.');
+                    return; 
+                }             
                 const verify = await verifyEmail(email);
                     if(Array.isArray(verify) && verify.length>0){
                         res.statusCode = 400;
                         res.send('Email já cadastrado');
                     } else {
                         try {
-                            await singUp(completeName, email, password);
+                            await singUp(completeName, email, password, birthday);
                             const id_usuario = await getId(email);
                             await createWallet(id_usuario);
                             res.status(201).send('Cadastro realizado com sucesso!'); 
