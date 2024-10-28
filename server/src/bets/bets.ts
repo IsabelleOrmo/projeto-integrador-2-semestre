@@ -188,7 +188,7 @@ export namespace BetHandler {
             const cota = await valorCota(eventoId);
 
             if (!cota) {
-                res.status(400).send('Cota para o evento não encontrada.');
+                res.status(404).send('Cota para o evento não encontrada.');
                 return;
             }
             
@@ -209,7 +209,7 @@ export namespace BetHandler {
         } catch (error) {
             console.error('Erro:', error);
             res.status(500).send('Erro.'); 
-        }
-    }
+  }
+}
 
 }

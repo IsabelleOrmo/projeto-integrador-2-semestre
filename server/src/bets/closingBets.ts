@@ -43,6 +43,17 @@ export namespace ClosingBetsHandler {
         decisao_aposta: string;        
     };
 
+    function calcularValorTotal(apostas: Bet[]): number {
+        let valorTotal = 0;
+        for (let index = 0; index < apostas.length; index++) {
+            const valor = apostas[index].VALOR;
+            if (valor !== undefined) {
+                valorTotal += valor;
+            }
+        }
+        return valorTotal;
+    }    
+
     async function finishEvent(id_evento: number, decisao_aposta: string) {
         OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
     
@@ -200,46 +211,29 @@ export namespace ClosingBetsHandler {
             await finishEvent(eventoId, decisao_apostaUpper);
             let cota = await getCotas(eventoId);
             if (!cota) {
-                res.status(400).send('Requisição inválida - Parâmetros faltando.');
+                res.status(404).send('Requisição inválida - Parâmetros faltando.');
                 return; 
             }
             if (decisao_apostaUpper === 'NÃO') {
                 const winners = await getWinners(eventoId, decisao_apostaUpper);
                 const losers = await getLosers(eventoId, 'SIM');
                 if (!losers || !winners) {
-                    res.status(400).send('Requisição inválida - Parâmetros faltando.');
+                    res.status(404).send('Requisição inválida - Parâmetros faltando.');
                     return; 
                 }
-                let valorPerdedores = 0;
-                for (let index = 0; index < losers.length; index++) {
-                    const valor = losers[index].VALOR;
-                    if (valor !== undefined) {
-                        valorPerdedores = valorPerdedores + valor;
-                    }
-                }
-
                 
-                let valorDistruibuido = valorPerdedores; 
+                let valorDistruibuido = calcularValorTotal(losers);
 
-                let valorTotal = 0; 
-
-                for (let index = 0; index < winners.length; index++) {
-                    const valorW = winners[index].VALOR;
-                    if (valorW !== undefined) {
-                        valorTotal = valorTotal + valorW;
-                    }
-                }
-
-                const valorTotalCotas = valorTotal/cota;
-                const valorPorCota = valorDistruibuido/valorTotalCotas;
+                const valorTotalCotas = calcularValorTotal(winners)/cota; //ATRAVES DO VALOR TOTAL APOSTADO PELO VENCEDORES E O VALOR DE CADA COTA OBTEMOS O TOTAL DE COTAS APOSTADAS PELOS VENCEDORES QUE SERA ESSENCIAL NA DISTRIBUICAO DOS GANHOS
+                const valorPorCota = valorDistruibuido/valorTotalCotas; //ATRAVES DO VALOR A SER DISTRIBUIDO E O NUMERO TOTAL DE COTAS APOSTADOS PELOS GANHADORES TEMOS O VALOR A SER DISTRIBUIDO POR CADA COTA APOSTADA
 
                 for (let index = 0; index < winners.length; index++) {
                     const valor = winners[index].VALOR;
                     const id = winners[index].ID_USUARIO;
                     if (valor !== undefined) {
-                        let qntdCota = valor/cota;
-                        const valorUp = valorPorCota*qntdCota;
-                        const currentlyWallet = await getWalletFunds(id);
+                        let qntdCota = valor/cota; //QUANTIDADE DE COTAS APOSTADAS POR CADA GANHADOR
+                        const valorUp = valorPorCota*qntdCota; //VALOR POR COTA QUE DEVE SER DISTRIBUIDO MUTIPLICADO PELA QUANTIDADE DE COTAS RESULTANDO NO VALOR GANHO PELO USUARIO PELA APOSTA FEITA
+                        const currentlyWallet = await getWalletFunds(id); //OBTEM O VALOR ATUAL DA CARTEIRA
                         if (!currentlyWallet) {
                             res.status(400).send('Requisição inválida - Parâmetros faltando.');
                             return; 
@@ -301,7 +295,7 @@ export namespace ClosingBetsHandler {
         } catch (error) {
             console.error('Erro:', error);
             res.status(500).send('Erro.'); 
-        }
-    }
+  }
+}
 
 }
