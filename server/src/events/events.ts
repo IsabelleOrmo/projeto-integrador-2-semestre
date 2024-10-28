@@ -1,4 +1,5 @@
 import { Request, RequestHandler, Response } from "express";
+import { sendMail } from "../accounts/email";
 import OracleDB from "oracledb";
 import dotenv from 'dotenv'; 
 dotenv.config();
@@ -97,6 +98,54 @@ export namespace EventsHandler {
     
         return verify.rows;
     }
+
+    async function getIdEventOwner(id_evento: number): Promise<number | undefined> {
+        OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
+    
+        let connection = await OracleDB.getConnection({
+            user: process.env.ORACLE_USER,
+            password: process.env.ORACLE_PASSWORD,
+            connectString: process.env.ORACLE_CONN_STR
+        });
+    
+            let verify = await connection.execute<{ ID_USUARIO: number }>(
+                `SELECT ID_USUARIO FROM EVENTS WHERE ID_EVENTO = :id_evento`,
+                [id_evento]
+            );
+    
+            await connection.close();
+            
+            return verify.rows?.[0]?.ID_USUARIO;
+            
+    }
+    
+
+    async function getEmail(id_usuario: number): Promise<string | undefined> {
+        OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
+    
+        const connection = await OracleDB.getConnection({
+            user: process.env.ORACLE_USER,
+            password: process.env.ORACLE_PASSWORD,
+            connectString: process.env.ORACLE_CONN_STR
+        });
+    
+        
+            const result = await connection.execute<{ EMAIL: string }>(
+                `SELECT EMAIL FROM ACCOUNTS WHERE ID = :id_usuario`,
+                [id_usuario]
+            );
+    
+            await connection.close();
+
+            const rows = result.rows;
+            
+            if (rows && rows.length > 0) {
+                return rows[0].EMAIL;
+            } else {
+                return undefined; 
+            }
+    }
+    
     
     async function addNewEvent(
         id_usuario: number, 
@@ -379,6 +428,24 @@ export namespace EventsHandler {
                 try {
                     const eventoId = parseInt(id_evento, 10); // tranforma em number
                     await evaluateNewEvent(eventoId, statusUpper);
+                    const idOwner = await getIdEventOwner(eventoId);
+                
+                    if(!idOwner){
+                        res.status(404).send('Email nao encontrado');
+                        return;
+                    }
+                    const email = await getEmail(idOwner);
+                    
+                    if (email && statusUpper === 'REPROVADO') {
+                        const from: string = 'k1tk4tc4t@gmail.com';
+                        const to: string = email;
+                        const subject: string = 'EVENTO REPROVADO';
+                        const mailTemplate: string = 'Seu novo evento foi reprovado';
+                        sendMail(from, to, subject, mailTemplate);
+                    } else if (!email) {
+                        console.error("Email is undefined or invalid for user:", id_usuario);
+                    }
+
                     res.status(200).send('Status do evento alterado.'); 
                 } catch (error) {
                     console.error('Erro ao adicionar evento:', error);
