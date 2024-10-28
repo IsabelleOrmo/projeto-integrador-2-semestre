@@ -18,6 +18,10 @@ export namespace AccountsHandler {
         email:string;
         password:string | undefined;
     };
+
+    interface Account {
+        ID: number;
+    }
     
 
     async function login(email: string, password: string) {
@@ -69,7 +73,7 @@ export namespace AccountsHandler {
     }
     
     
-// arrumar verificação de senha
+
     export const loginHandler: RequestHandler = async (req: Request, res: Response) => {
         const { email: pEmail, password: pPassword } = req.body; 
     
@@ -182,10 +186,58 @@ export namespace AccountsHandler {
             await connection.commit();
             await connection.close();
         }
+
+        async function userId(token: string): Promise<number | null> {
+            OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
+    
+            const connection = await OracleDB.getConnection({
+                user: process.env.ORACLE_USER,
+                password: process.env.ORACLE_PASSWORD,
+                connectString: process.env.ORACLE_CONN_STR
+            });
+    
+            try {
+                const result = await connection.execute(
+                    `SELECT ID FROM ACCOUNTS WHERE TOKEN = :token`,
+                    [token]
+                );
+    
+                const rows = result.rows as Account[];
+    
+                if (rows && rows.length > 0) {
+                    return rows[0].ID; 
+                } else {
+                    return null; 
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                return null; 
+            } finally {
+                await connection.close(); 
+            }
+        }  
+
+        async function getHistory(id_usuario: number) {
+            OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
+    
+            const connection = await OracleDB.getConnection({
+                user: process.env.ORACLE_USER,
+                password: process.env.ORACLE_PASSWORD,
+                connectString: process.env.ORACLE_CONN_STR
+            });
+    
+                const result = await connection.execute(
+                    `SELECT ID_TRANSACAO, ID_USUARIO, ID_EVENTO, VALOR, TIPO, TO_CHAR(DATA_TRANSACAO, 'YYYY-MM-DD HH24:MI:SS') AS DATA_TRASACAO FROM TRANSACAO WHERE ID_USUARIO = :id_usuario`,
+                    [id_usuario]
+                );
+            
+                await connection.close(); 
+
+                return result.rows;
+        }
         
 
-    export const singUpHandler: RequestHandler =
-        async (req: Request, res: Response) => {
+    export const singUpHandler: RequestHandler = async (req: Request, res: Response) => {
             const { completeName, email, password } = req.body;
             if (completeName && email && password) {
                 const verify = await verifyEmail(email);
@@ -206,5 +258,27 @@ export namespace AccountsHandler {
             }  else {
                 res.status(400).send('Requisição inválida - Parâmetros faltando.'); 
             }
+    }
+
+    export const getHistoryHandler: RequestHandler = async (req: Request, res: Response) => {
+        const token = req.get('token');
+        if (token) {
+            const id_usuario = await userId(token);
+            if(!id_usuario){
+                res.status(400).send('Parametros faltando tente logar novamente.'); 
+                return;
+            }
+            const historico = await getHistory(id_usuario);
+                if(Array.isArray(historico) && historico.length>0){
+                   res.status(200).json(historico); 
+                   return;
+                } else {
+                    res.status(404).send("Historico não encontrado");
+                    return; 
+                }
+        }  else {
+            res.status(400).send('Requisição inválida - Parâmetros faltando.'); 
         }
+    }
+    
 }

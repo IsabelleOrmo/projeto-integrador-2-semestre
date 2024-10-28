@@ -41,6 +41,7 @@ routes.patch('/addFunds', WalletHandler.addFundsHandler);
 routes.patch('/withdrawFunds', WalletHandler.withdrawFundsHandler);
 routes.post('/betOnEvent', BetHandler.betOnEventHandler);
 routes.patch('/finishEvent', ClosingBetsHandler.finishEventHandler);
+routes.get('/getHistory', AccountsHandler.getHistoryHandler);
 
 app.use(routes);
 
