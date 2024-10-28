@@ -401,6 +401,11 @@ export namespace EventsHandler {
             res.status(400).send('Requisição inválida - Parâmetros faltando.');
             return; 
         }
+
+        if(valor_cota<1){
+            res.status(400).send('O valor da cota não pode ser menor que R$1,00');
+            return; 
+        }
     
         try {
             const id_usuario = await userId(token);
