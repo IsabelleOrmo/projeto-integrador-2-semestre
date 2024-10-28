@@ -189,9 +189,55 @@ export namespace ClosingBetsHandler {
             }
     }
 
+    async function getEndDate(id_evento: number): Promise<string | null> {
+        OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
+    
+        const connection = await OracleDB.getConnection({
+            user: process.env.ORACLE_USER,
+            password: process.env.ORACLE_PASSWORD,
+            connectString: process.env.ORACLE_CONN_STR
+        });
+    
+        let result = await connection.execute<{ DATA_EVENTO: string }>(
+            `SELECT TO_CHAR(DATA_EVENTO, 'YYYY-MM-DD') AS DATA_EVENTO 
+             FROM EVENTS WHERE ID_EVENTO = :id_evento AND STATUS_EVENTO = 'APROVADO'`,
+            { id_evento }
+        );
+    
+        await connection.close();
+    
+        if (result.rows && result.rows.length > 0) {
+            return result.rows[0].DATA_EVENTO;
+        } else {
+            return null;
+        }
+    }
+
+    async function verifyDate(inputDate: string): Promise<boolean> {
+        const currentDate = new Date(); // Obtém a data e hora atual.
+        const userDate = new Date(inputDate); // Converte a string `inputDate` em um objeto Date.
+    
+        // Verifica se userDate é inválido.
+        if (isNaN(userDate.getTime())) {
+            return false; // Retorna false se a data for inválida.
+        }
+    
+        // Cria uma nova data para um dia após a userDate.
+        const nextDay = new Date(userDate);
+        nextDay.setDate(userDate.getDate() + 1); // Adiciona um dia à data de início.
+    
+        // Verifica se a data atual é menor ou igual ao dia após a data de início.
+        if (currentDate < nextDay) {
+            return false; // Retorna false se a data atual é antes ou igual a um dia após userDate.
+        }
+        
+        return true; // Retorna true se a data atual é mais de um dia após userDate.
+    }
+    
+
     export const finishEventHandler: RequestHandler = async (req: Request, res: Response) => {
         const token = req.get('token');
-        const id_evento = req.get('id_evento');
+        const id_evento = req.get('id_evento'); 
         const { decisao_aposta } = req.body;
         var decisao_apostaUpper = decisao_aposta.toUpperCase( );
         
@@ -204,10 +250,23 @@ export namespace ClosingBetsHandler {
             res.status(400).send('Requisição inválida - Parâmetros faltando.');
             return; 
         }
+
+        const eventoId = parseInt(id_evento, 10);
+
+        const dataFim = await getEndDate(eventoId);
+        if (!dataFim) {
+            res.status(400).send('Requisição inválida');
+            return; 
+        }
+        const validarData = await verifyDate(dataFim);
     
+        if(validarData==false){
+            res.status(400).send('O evento só pode ser encerrado um dia após sua ocorência');
+            return;
+        }
+
         try {
             
-            const eventoId = parseInt(id_evento, 10);
             await finishEvent(eventoId, decisao_apostaUpper);
             let cota = await getCotas(eventoId);
             if (!cota) {
