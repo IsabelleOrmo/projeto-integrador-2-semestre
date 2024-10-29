@@ -146,6 +146,66 @@ export namespace WalletHandler {
         return valor;
     }
 
+    async function getPix(id_usuario: number) {
+        OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
+    
+        const connection = await OracleDB.getConnection({
+            user: process.env.ORACLE_USER,
+            password: process.env.ORACLE_PASSWORD,
+            connectString: process.env.ORACLE_CONN_STR
+        });
+    
+        let result = await connection.execute(
+            `SELECT * FROM DADOS_BANCARIOS WHERE ID_USUARIO = :id_usuario AND CHAVE_PIX IS NOT NULL`,
+            [id_usuario]
+        );
+    
+        await connection.commit();
+        await connection.close();
+
+        return result.rows;
+    }
+
+    async function getContaBancaria(id_usuario: number) {
+        OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
+    
+        const connection = await OracleDB.getConnection({
+            user: process.env.ORACLE_USER,
+            password: process.env.ORACLE_PASSWORD,
+            connectString: process.env.ORACLE_CONN_STR
+        });
+    
+        let result = await connection.execute(
+            `SELECT * FROM DADOS_BANCARIOS WHERE ID_USUARIO = :id_usuario AND BANCO IS NOT NULL`,
+            [id_usuario]
+        );
+    
+        await connection.commit();
+        await connection.close();
+
+        return result.rows;
+    }
+
+    async function getCartao(id_usuario: number) {
+        OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
+    
+        const connection = await OracleDB.getConnection({
+            user: process.env.ORACLE_USER,
+            password: process.env.ORACLE_PASSWORD,
+            connectString: process.env.ORACLE_CONN_STR
+        });
+    
+        let result = await connection.execute(
+            `SELECT * FROM DADOS_BANCARIOS WHERE ID_USUARIO = :id_usuario AND NUMERO_CARTAO IS NOT NULL`,
+            [id_usuario]
+        );
+    
+        await connection.commit();
+        await connection.close();
+
+        return result.rows;
+    }
+
     export const withdrawFundsHandler: RequestHandler = async (req: Request, res: Response) => {
         const token = req.get('token');
         const { valor } = req.body;
@@ -160,15 +220,25 @@ export namespace WalletHandler {
             res.status(400).send('Requisição inválida - Parâmetros faltando.');
             return; 
         }
+
+        const id_usuario = await userId(token);
+    
+        if (id_usuario === null) {
+            res.status(401).send('Acesso não permitido. Tente logar novamente.');
+            return;
+        }
+
+
+        const verificaPix = await getPix(id_usuario);
+        const verificaContaBancaria = await getContaBancaria(id_usuario);
+
+        if(Array.isArray(verificaContaBancaria) && verificaContaBancaria.length===0 && Array.isArray(verificaPix) && verificaPix.length===0){
+            res.status(400).send('Cadastre uma conta bancária ou pix para sacar seus fundos.');
+            return;
+        }
     
         try {
-            const id_usuario = await userId(token);
-    
-            if (id_usuario === null) {
-                res.status(401).send('Acesso não permitido. Tente logar novamente.');
-                return;
-            }
-    
+
             const valorTaxa = await valorComTaxa(valor); 
             const valorAtualCarteira = await getWalletFunds(id_usuario); 
     
@@ -206,15 +276,24 @@ export namespace WalletHandler {
             res.status(400).send('Requisição inválida - Parâmetros faltando.');
             return; 
         }
+
+        const id_usuario = await userId(token);
+
+        if (id_usuario === null) {
+            res.status(401).send('Acesso não permitido. Tente logar novamente.');
+            return;
+        }
+
+        const verificaCartao = await getCartao(id_usuario);
+
+        if(Array.isArray(verificaCartao) && verificaCartao.length===0){
+            res.status(400).send('Cadastre um cartão para fazer um depósito.');
+            return;
+        }
     
         try {
-            const id_usuario = await userId(token);
     
-            if (id_usuario === null) {
-                res.status(401).send('Acesso não permitido. Tente logar novamente.');
-                return;
-            }
-    
+
 
             const valorAtual = await getWalletFunds(id_usuario);
             const valorTransacao = valorAtual + valor;

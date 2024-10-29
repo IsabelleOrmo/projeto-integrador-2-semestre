@@ -184,6 +184,12 @@ export namespace AccountsHandler {
                 [id_usuario]  
             );
 
+            await connection.execute(
+                `INSERT INTO DADOS_BANCARIOS (ID_CONTA_BANCARIA, ID_USUARIO) 
+                 VALUES (SEQ_DADOS_BANCARIOS.NEXTVAL, :id_usuario)`,  
+                [id_usuario]  
+            );
+
             await connection.commit();
             await connection.close();
         }

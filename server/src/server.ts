@@ -5,6 +5,7 @@ import { EventsHandler } from "./events/events";
 import { WalletHandler } from "./wallet/wallet";
 import { BetHandler } from "./bets/bets";
 import { ClosingBetsHandler } from "./bets/closingBets";
+import { Dados_BancariosHandler } from "./wallet/dados_bancarios";
 import OracleDB from 'oracledb';
 import dotenv from 'dotenv'; 
 
@@ -42,6 +43,7 @@ routes.patch('/withdrawFunds', WalletHandler.withdrawFundsHandler);
 routes.post('/betOnEvent', BetHandler.betOnEventHandler);
 routes.patch('/finishEvent', ClosingBetsHandler.finishEventHandler);
 routes.get('/getHistory', AccountsHandler.getHistoryHandler);
+routes.post('/addDadosBancarios', Dados_BancariosHandler.addDadosBancariosHandler);
 
 app.use(routes);
 
