@@ -133,11 +133,11 @@ export namespace WalletHandler {
     async function valorComTaxa(valor: number) {
         if(valor<=100){
             valor = valor - ((4/100)*valor);
-        } else if (valor>=101 || valor <=1000){
+        } else if (valor>=101 && valor <=1000){
             valor = valor - ((3/100)*valor);
-        } else if (valor>=1001 || valor <=5000){
+        } else if (valor>=1001 && valor <=5000){
             valor = valor - ((2/100)*valor);
-        } else if (valor>=5001 || valor <=100000){
+        } else if (valor>=5001 && valor <=100000){
             valor = valor - ((2/100)*valor);
         } else {
             valor = valor;
@@ -206,6 +206,31 @@ export namespace WalletHandler {
         return result.rows;
     }
 
+    async function getSaques(id_usuario: number) {
+        OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
+    
+        const connection = await OracleDB.getConnection({
+            user: process.env.ORACLE_USER,
+            password: process.env.ORACLE_PASSWORD,
+            connectString: process.env.ORACLE_CONN_STR
+        });
+    
+        const result = await connection.execute<{ VALOR: number }>(
+            `SELECT NVL(SUM(VALOR), 0) AS VALOR FROM TRANSACAO WHERE ID_USUARIO = :id_usuario AND TIPO = 'SAQUE' AND TRUNC(DATA_TRANSACAO) = TRUNC(SYSDATE)`,
+            [id_usuario]
+        );
+    
+        await connection.commit();
+        await connection.close();
+    
+        if (result.rows && result.rows.length > 0) {
+            return result.rows[0].VALOR;
+        } else {
+            return 0;
+        }
+    }
+    
+
     export const withdrawFundsHandler: RequestHandler = async (req: Request, res: Response) => {
         const token = req.get('token');
         const { valor } = req.body;
@@ -234,6 +259,13 @@ export namespace WalletHandler {
 
         if(Array.isArray(verificaContaBancaria) && verificaContaBancaria.length===0 && Array.isArray(verificaPix) && verificaPix.length===0){
             res.status(400).send('Cadastre uma conta bancária ou pix para sacar seus fundos.');
+            return;
+        }
+
+        const saque = await getSaques(id_usuario);
+        let saqueDia = valor + saque;
+        if(saqueDia>101000.00){
+            res.status(400).send('Saque acima do limite diário.');
             return;
         }
     

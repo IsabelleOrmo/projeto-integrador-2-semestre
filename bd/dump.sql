@@ -104,7 +104,7 @@ CREATE TABLE DADOS_BANCARIOS (
     tipo_conta VARCHAR2(50),
     chave_pix VARCHAR2(100),
     nome_titular VARCHAR2(100),
-    CVV NUMBER;
+    CVV NUMBER,
     data_validade DATE,
     numero_cartao NUMBER,
     nome_cartao VARCHAR2(100),

@@ -245,6 +245,11 @@ export namespace ClosingBetsHandler {
             res.status(400).send('Requisição inválida - tente logar novamente.');
             return; 
         }
+
+        if (!token) {
+            res.status(400).send('Requisição inválida - tente logar novamente.');
+            return; 
+        }
     
         if (!decisao_apostaUpper || !id_evento) {
             res.status(400).send('Requisição inválida - Parâmetros faltando.');

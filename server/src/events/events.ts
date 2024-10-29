@@ -353,6 +353,17 @@ export namespace EventsHandler {
         return events.rows;
     }
 
+    async function verifyDate(inputDate: string): Promise <boolean> {
+        const currentDate = new Date();
+        const userDate = new Date(inputDate);
+    
+        if (isNaN(userDate.getTime()) || userDate < currentDate) {
+            return false;
+        }
+        
+        return true;
+    }
+
     async function searchEvent(keywords: string) {
         OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
     
@@ -390,9 +401,16 @@ export namespace EventsHandler {
     export const addNewEventHandler: RequestHandler = async (req: Request, res: Response) => {
         const token = req.get('token');
         const { titulo, descricao, valor_cota, data_hora_inicio, data_hora_fim, data_evento } = req.body;
-    
-        
-        if (typeof token !== 'string') {
+        const verificaDataInicio = await verifyDate(data_hora_inicio);
+        const verificaDataFim = await verifyDate(data_hora_fim);
+        const verificaData = await verifyDate(data_evento);
+
+        if(verificaData==false || verificaDataFim==false || verificaDataInicio==false){
+            res.status(400).send('Requisição inválida - datas inválidas.');
+            return; 
+        }
+
+        if (typeof token !== 'string' && !token) {
             res.status(400).send('Requisição inválida - tente logar novamente.');
             return; 
         }
@@ -406,6 +424,8 @@ export namespace EventsHandler {
             res.status(400).send('O valor da cota não pode ser menor que R$1,00');
             return; 
         }
+
+        
     
         try {
             const id_usuario = await userId(token);
@@ -490,6 +510,25 @@ export namespace EventsHandler {
 
     export const getEventsByStatusHandler: RequestHandler = async (req: Request, res: Response) =>{
         const { status } = req.body;
+        const token = req.get('token');
+        if (typeof token !== 'string') {
+            res.status(400).send('Requisição inválida - tente logar novamente.');
+            return; 
+        }
+
+        const id_usuario = await userId(token);
+        if (!id_usuario) {
+            res.status(400).send('Requisição inválida - tente logar novamente.');
+            return; 
+        }
+
+        let role = await verifyRole(id_usuario);
+
+        if(role.includes(1)){
+            res.status(400).send('Acesso negado');
+            return; 
+        }
+
         if(status){
             try {
                 var statusUpper = status.toUpperCase( );

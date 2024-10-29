@@ -33,7 +33,7 @@ routes.post('/login', AccountsHandler.loginHandler);
 routes.post('/singUp', AccountsHandler.singUpHandler);
 routes.post('/addNewEvent', EventsHandler.addNewEventHandler);
 routes.patch('/evaluateNewEvent', EventsHandler.evaluateNewEventHandler);
-routes.get('/getEvents', EventsHandler.getEventsByStatusHandler);
+routes.get('/getEventsStatus', EventsHandler.getEventsByStatusHandler);
 routes.get('/availableEvents', EventsHandler.getAvailableEventsHandler);
 routes.get('/finishedEvents', EventsHandler.getFinishedEventsHandler);
 routes.patch('/deleteEvent', EventsHandler.deleteEventHandler);
