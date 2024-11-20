@@ -1,0 +1,141 @@
+/* RESET E CONFIGURAÇÕES BÁSICAS */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* ESTILO DO FORMULÁRIO */
+  .form-container {
+    background-color: #006d6f;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  /* LINHA PARA CAMPOS LADO A LADO */
+  .row {
+    display: flex;
+    gap: 10px; /* Espaço entre os campos */
+  }
+  
+  .row .form-group {
+    flex: 1; /* Faz os campos ocuparem o mesmo tamanho */
+  }
+  
+  /* GRUPO DE FORMULÁRIO */
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  label {
+    font-size: 14px;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  input {
+    padding: 10px;
+    border: 1px solid #A5D4FB;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  
+  input:focus {
+    outline: none;
+    border-color: #A5D4FB;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+  
+  input::placeholder {
+    color: #aaa;
+    font-size: 12px;
+  }
+  
+  /* BOTÃO DE SUBMIT */
+  button {
+    padding: 7px;
+    background-color: #2F7580;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* AJUSTE DOS CAMPOS "NOME" E "SOBRENOME" */
+  .row {
+    display: flex;
+    justify-content: space-between; /* Mantém os campos alinhados */
+  }
+  
+  .row input {
+    width: 88%; /* Divide o espaço de forma equilibrada */
+}
+
+  /* login link */
+  .login {
+    margin-top: 10px;
+  }
+  
+  .login p {
+    text-align: center;
+    font-size: 14px;
+  }
+  
+  .login a {
+    color: #000000;
+    text-decoration: underline black;
+  }
+  
+  .login a:hover {
+    text-decoration: underline;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    text-align: center;
+  }
+  
+  /* Logo */
+  .logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .logo img {
+    width: 300px;
+    height: 300px;
+  }
+  
