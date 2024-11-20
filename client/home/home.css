@@ -1,0 +1,156 @@
+ /* Estilo Geral */
+ body {
+    font-family: "Instrument Sans", Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #EFEFEF; /* Cinza */
+    color: #000000; /* Preto */
+}
+
+/* Estilo do Formulário de Pesquisa */
+.form-pesquisa {
+    display: flex;
+    width: 100%;
+    margin-right: 10%;
+    margin-left: 5%;
+    position: relative;
+    background-color: #2F7580;
+    border-radius: 100%;
+}
+
+.form-pesquisa input {
+    background-color: #2F7580;
+    border: none;
+    width: 100%;
+    padding: 0.5rem;
+    outline: none;
+    box-shadow: none;
+}
+
+.form-pesquisa input:focus {
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Destaque no foco */
+}
+
+.form-pesquisa span {
+    background-color: #2F7580;
+    border: none;
+}
+
+/* Estilo dos Ícones */
+.icons {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 20px;
+}
+
+.icon-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.icon-container svg {
+    width: 30px;
+    height: auto;
+    fill: currentColor;
+}
+
+.icon-container div {
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+/* Responsividade */
+@media  (min-width: 300px) and (max-width: 980px) {
+    .form-pesquisa {
+        width: 50%;
+        margin-left: 0%;
+        margin-right: 0%;
+        position: relative;
+        flex-wrap: nowrap;
+    }
+
+    .icons {
+        gap: 10px;
+    }
+}
+
+/* Contêiner Principal */
+.container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 10px;
+}
+
+/* Títulos das Seções */
+h2 {
+    color: #000000; /* Preto */
+    margin-bottom: 20px; /* Espaçamento maior para uniformidade */
+    font-weight: bold;
+}
+
+/* Grid de Eventos */
+.events {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 25px; /* Espaçamento entre os cartões */
+}
+
+/* Cartão de Evento */
+.event-card {
+    background: #FFFFFF;
+    border: 1px solid #A5D4FB; /* Azul claro */
+    border-radius: 5px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Espaçamento interno entre os elementos do cartão */
+    font-size: 14px;
+}
+
+.event-card h3 {
+    font-size: 1.2em;
+    margin: 0;
+    color: #000000; /* Preto */
+}
+
+.event-card .data-evento {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-weight: bold;
+    color: #000000; /* Preto */
+}
+
+.event-card .descricao {
+    margin-top: 10px;
+    font-style: italic;
+    color: #000000; /* Preto */
+}
+
+.event-card .valor,
+.event-card .data-fim {
+    margin: 0;
+    color: #000000; /* Preto */
+}
+
+/* Botão de Aposta */
+.event-card button {
+    align-self: flex-end;
+    background-color: #A5D4FB; /* Azul claro */
+    color: #000000; /* Preto */
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.event-card button:hover {
+    background-color: #2F7580; /* Azul escuro */
+    color: #FFFFFF; /* Branco */
+}
