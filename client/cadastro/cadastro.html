@@ -6,6 +6,7 @@
   <title>Cadastro</title>
   <link rel="stylesheet" href="./cadastro.css">
   <link rel="icon" type="image/x-icon" href="../imagens/favicon.ico">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <div class="container">
@@ -14,7 +15,7 @@
           <h1>Bem-vindo</h1>
         </div>
   <div class="form-container">
-    <form>
+    <form  onsubmit="return singUp(event);"">
       <div class="row">
         <div class="form-group">
           <label for="nome">Nome *</label>
@@ -35,7 +36,7 @@
       </div>
       <div class="form-group">
         <label for="senha">Senha *</label>
-        <input type="password" id="senha" name="senha" minlength="6" placeholder="Mínimo de 6 caracteres" required>
+        <input type="password" id="senha" name="senha" minlength="5" placeholder="Mínimo de 5 caracteres" required>
       </div>
       <button type="submit">Enviar</button>
     </form>
@@ -43,5 +44,64 @@
         <p>Já tem conta? <a href="../login/login.html">Login</a></p>
       </div>
   </div>
+
+  <script>
+
+    async function singUp(event) {
+          event.preventDefault(); // Evita envio padrão do formulário
+
+          const nome = document.getElementById("nome").value;
+          const sobrenome = document.getElementById("sobrenome").value;
+          const completeName = nome + " " + sobrenome;
+          const birthday = document.getElementById("data-nascimento").value;
+          const email = document.getElementById("email").value;
+          const password = document.getElementById("senha").value;
+
+          try {
+              const resSingUp = await fetch("http://localhost:5000/singUp", {
+                  method: "POST", 
+                  headers: {
+                      "Content-Type": "application/json"
+                  },
+                  body: JSON.stringify({
+                      completeName: completeName,
+                      email: email,
+                      password: password,
+                      birthday: birthday
+                  })
+              });
+              const resText = await resSingUp.text(); // corpo da resposta como texto
+
+              if (resSingUp.status === 201) {
+                Swal.fire({
+                    title: "Conta criada com sucesso!",
+                    text: "Se direcione para página de login.",
+                    icon: "success"
+                  });
+              } else if (resSingUp.status === 400) {
+                Swal.fire({
+                    text: resText,
+                    icon: "error"
+                  });
+              }
+              else {
+                Swal.fire({
+                    title: "Erro",
+                    text: "Erro inesperado ao fazer o cadastro. Tente novamente mais tarde.",
+                    icon: "question"
+                  });
+              }
+          } catch (error) {
+              console.error("Erro ao tentar logar:", error);
+              Swal.fire({
+                    title: "Erro",
+                    text: "Erro inesperado ao fazer o cadastro. Tente novamente mais tarde.",
+                    icon: "question"
+                  });
+          }
+      }
+
+  </script>
+
 </body>
 </html>

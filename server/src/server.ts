@@ -8,11 +8,12 @@ import { ClosingBetsHandler } from "./bets/closingBets";
 import { Dados_BancariosHandler } from "./wallet/dados_bancarios";
 import OracleDB from 'oracledb';
 import dotenv from 'dotenv'; 
+import cors from "cors"
 
-const port = 3000; 
+const port = 5000; 
 const app = express();
 const routes = Router();
-
+app.use(cors());
 // definir as rotas. 
 // a rota tem um verbo/método http (GET, POST, PUT, DELETE)
 
