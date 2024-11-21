@@ -36,6 +36,7 @@ routes.post('/addNewEvent', EventsHandler.addNewEventHandler);
 routes.patch('/evaluateNewEvent', EventsHandler.evaluateNewEventHandler);
 routes.get('/getEventsStatus', EventsHandler.getEventsByStatusHandler);
 routes.get('/availableEvents', EventsHandler.getAvailableEventsHandler);
+routes.get('/eventosMaisApostados', EventsHandler.getEventosMaisApostadosHandler);
 routes.get('/finishedEvents', EventsHandler.getFinishedEventsHandler);
 routes.patch('/deleteEvent', EventsHandler.deleteEventHandler);
 routes.get('/searchEvent', EventsHandler.searchEventHandler);

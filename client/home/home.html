@@ -61,23 +61,8 @@
         <!-- Eventos disponíveis -->
         <div class="event-section">
           <h2>Eventos Disponíveis</h2>
-          <div class="events">
-            <div class="event-card">
-              <h3>Título</h3>
-              <div class="data-evento">data/evento</div>
-              <p class="descricao">descrição</p>
-              <p class="valor">valor cota</p>
-              <p class="data-fim">data-fim</p>
-              <button>Apostar</button>
-            </div>
-            <div class="event-card">
-              <h3>Título</h3>
-              <div class="data-evento">data/evento</div>
-              <p class="descricao">descrição</p>
-              <p class="valor">valor cota</p>
-              <p class="data-fim">data-fim</p>
-              <button>Apostar</button>
-            </div>
+          <div class="events" id="events">
+           
           </div>
         </div>
     
@@ -85,24 +70,8 @@
         <div class="event-section">
           <br>
           <h2>Eventos Mais Apostados</h2>
-          <div class="events">
-            <div class="event-card">
-              <h3>Título</h3>
-              <div class="data-evento">data/evento</div>
-              <p class="descricao">descrição</p>
-              <p class="valor">valor cota</p>
-              <p class="data-fim">data-fim</p>
-              <button>Apostar</button>
-            </div>
-            <div class="event-card">
-              <br>
-              <h3>Título</h3>
-              <div class="data-evento">data/evento</div>
-              <p class="descricao">descrição</p>
-              <p class="valor">valor cota</p>
-              <p class="data-fim">data-fim</p>
-              <button>Apostar</button>
-            </div>
+          <div class="events" id="eventos-apostados">
+           
           </div>
         </div>
     
@@ -137,5 +106,86 @@
           </div>
         </div>
       </div>
+<script>
+        var eventsContainer = document.getElementById('events');
+        var eventsContainerMaisApostados = document.getElementById('eventos-apostados');
+    
+        // Função para buscar eventos disponíveis
+        async function requestAvailableEvents() {
+            try {
+                const resEvent = await fetch("http://localhost:5000/availableEvents", {
+                    method: "GET"
+                });
+                if (resEvent.ok) {
+                    const eventsData = await resEvent.json();
+                    fillAvailableEventCards(eventsData);
+                } else {
+                    alert("Nenhum evento encontrado.");
+                }
+            } catch (error) {
+                console.error("Erro ao buscar eventos disponíveis:", error);
+            }
+        }
+    
+        // Função para preencher os cartões de eventos disponíveis
+        function fillAvailableEventCards(events) {
+            eventsContainer.innerHTML = ''; // Limpa os eventos existentes
+            events.forEach(event => {
+                const eventCard = `
+                    <div class="event-card">
+                        <h3>${event.TITULO}</h3>
+                        <div class="data-evento">Data: ${event.DATA_EVENTO}</div>
+                        <p class="descricao">${event.DESCRICAO}</p>
+                        <p class="valor">Valor da cota: ${event.VALOR_COTA}</p>
+                        <p class="data-fim">Data e hora final: ${event.DATA_HORA_FIM}</p>
+                        <button>Apostar</button>
+                    </div>
+                `;
+                eventsContainer.insertAdjacentHTML('beforeend', eventCard);
+            });
+        }
+    
+        // Função para buscar eventos mais apostados
+        async function requestEventosMaisApostados() {
+            try {
+                const resEvent = await fetch("http://localhost:5000/eventosMaisApostados", {
+                    method: "GET"
+                });
+                if (resEvent.ok) {
+                    const eventsData = await resEvent.json();
+                    fillMostBetEventCards(eventsData);
+                } else {
+                    alert("Nenhum evento mais apostado encontrado.");
+                }
+            } catch (error) {
+                console.error("Erro ao buscar eventos mais apostados:", error);
+            }
+        }
+    
+        // Função para preencher os cartões de eventos mais apostados
+        function fillMostBetEventCards(events) {
+            eventsContainerMaisApostados.innerHTML = ''; // Limpa os eventos existentes
+            events.forEach(event => {
+                const eventCard = `
+                    <div class="event-card">
+                        <h3>${event.TITULO}</h3>
+                        <div class="data-evento">Data: ${event.DATA_EVENTO}</div>
+                        <p class="descricao">${event.DESCRICAO}</p>
+                        <p class="valor">Valor da cota: ${event.VALOR_COTA}</p>
+                        <p class="data-fim">Data e hora final: ${event.DATA_HORA_FIM}</p>
+                        <button>Apostar</button>
+                    </div>
+                `;
+                eventsContainerMaisApostados.insertAdjacentHTML('beforeend', eventCard);
+            });
+        }
+    
+        // Executa as funções ao carregar o DOM
+        document.addEventListener('DOMContentLoaded', () => {
+            requestAvailableEvents();
+            requestEventosMaisApostados();
+        });
+</script>
+
 </body>
 </html>

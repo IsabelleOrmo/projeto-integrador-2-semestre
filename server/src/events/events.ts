@@ -261,6 +261,46 @@ export namespace EventsHandler {
         
     }
 
+    async function getEventosMaisApostados() {
+        OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
+
+        const connection = await OracleDB.getConnection({
+            user: process.env.ORACLE_USER,
+            password: process.env.ORACLE_PASSWORD,
+            connectString: process.env.ORACLE_CONN_STR
+        });
+
+        let events = await connection.execute(
+            `SELECT 
+                EVENTS.id_evento, 
+                EVENTS.id_usuario, 
+                EVENTS.titulo, 
+                EVENTS.descricao, 
+                EVENTS.valor_cota, 
+                TO_CHAR(EVENTS.data_hora_inicio, 'YYYY-MM-DD HH24:MI:SS') AS data_hora_inicio, 
+                TO_CHAR(EVENTS.data_hora_fim, 'YYYY-MM-DD HH24:MI:SS') AS data_hora_fim, 
+                TO_CHAR(EVENTS.data_evento, 'YYYY-MM-DD') AS data_evento, 
+                EVENTS.status_evento,
+                COUNT(APOSTA.id_evento) AS total_apostas
+            FROM 
+                EVENTS 
+            INNER JOIN
+                APOSTA ON EVENTS.id_evento = APOSTA.id_evento
+            WHERE 
+                EVENTS.status_evento = 'APROVADO' 
+                AND EVENTS.data_hora_fim > SYSDATE
+            GROUP BY 
+                EVENTS.id_evento, EVENTS.id_usuario, EVENTS.titulo, EVENTS.descricao, EVENTS.valor_cota, 
+                EVENTS.data_hora_inicio, EVENTS.data_hora_fim, EVENTS.data_evento, EVENTS.status_evento
+            ORDER BY 
+                total_apostas DESC`
+        );
+
+        await connection.close();
+        return events.rows;
+        
+    }
+
     async function getFinishedEvents() {
         OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
 
@@ -561,6 +601,20 @@ export namespace EventsHandler {
                 res.status(500).send('Erro ao buscar evento.');
             }
     }
+
+    export const getEventosMaisApostadosHandler: RequestHandler = async (req: Request, res: Response) =>{
+        try {
+            let events = await getEventosMaisApostados();
+            if(Array.isArray(events) && events.length>0){
+                res.status(200).json(events);
+            } else {
+            res.status(404).send('Eventos não encontrados');
+            }
+        } catch (error) {
+            console.error('Erro ao buscar evento:', error);
+            res.status(500).send('Erro ao buscar evento.');
+        }
+}
 
     export const getFinishedEventsHandler: RequestHandler = async (req: Request, res: Response) =>{
         try {

@@ -31,10 +31,19 @@
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Destaque no foco */
 }
 
-.form-pesquisa span {
-    background-color: #2F7580;
+.form-pesquisa input:focus, 
+.form-pesquisa input:active {
+    background-color: #2F7580; 
+    border: none;
+    box-shadow: none; 
+    outline: none;
+}
+
+.form-pesquisa span{
+    background-color: #2F7580; 
     border: none;
 }
+
 
 /* Estilo dos Ícones */
 .icons {
@@ -119,7 +128,6 @@ h2 {
 }
 
 .event-card .data-evento {
-    position: absolute;
     top: 15px;
     right: 15px;
     font-weight: bold;
