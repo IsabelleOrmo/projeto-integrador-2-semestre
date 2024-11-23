@@ -9,6 +9,7 @@ import { Dados_BancariosHandler } from "./wallet/dados_bancarios";
 import OracleDB from 'oracledb';
 import dotenv from 'dotenv'; 
 import cors from "cors"
+import session from 'express-session';
 
 const port = 5000; 
 const app = express();
@@ -27,8 +28,13 @@ routes.get('/', (req: Request, res: Response)=>{
 
 app.use(express.json())
 
-// vamos organizar as rotas em outro local 
-// login...
+app.use(
+    session({
+        secret: "secretKey",
+        resave: false,
+        saveUninitialized: false,
+    })
+);
 
 routes.post('/login', AccountsHandler.loginHandler);
 routes.post('/singUp', AccountsHandler.singUpHandler);

@@ -81,6 +81,10 @@ export namespace AccountsHandler {
         if (pEmail && pPassword) {
             try {
                 const role = await verifyRole(pEmail);
+                req.session.user = {
+                    email: pEmail,
+                    isAdmin: role.includes(1),
+                 }
                     const result =  await login(pEmail, pPassword); 
                     if (Array.isArray(result) && result.length>0) {  // Se houver resultado da função login
                         if (role.includes(1)) { // Verifica se o role contém 1

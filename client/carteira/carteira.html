@@ -155,102 +155,103 @@
                 </div>
             </div>
     
-    <!-- Modal Para Cadastro-->
-    <div class="modal fade" id="cadastroModal" tabindex="-1" aria-labelledby="cadastroModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-        <div class="modal-content">
-            <!-- Ajuste do background do modal-header -->
-            <div class="modal-header">
-            <h5 class="modal-title" id="cadastroModalLabel">Cadastro de Dados</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-            </div>
-            <div class="modal-body">
-    
-            <!-- Abas para as seções -->
-            <ul class="nav nav-tabs" id="cadastroTab" role="tablist">
-                <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="conta-tab" data-bs-toggle="tab" data-bs-target="#conta" type="button" role="tab" aria-controls="conta" aria-selected="true">Conta Bancária</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                <button class="nav-link" id="pix-tab" data-bs-toggle="tab" data-bs-target="#pix" type="button" role="tab" aria-controls="pix" aria-selected="false">Pix</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                <button class="nav-link" id="cartao-tab" data-bs-toggle="tab" data-bs-target="#cartao" type="button" role="tab" aria-controls="cartao" aria-selected="false">Cartão</button>
-                </li>
-            </ul>
-    
-            <!-- Conteúdo das abas -->
-            <div class="tab-content" id="cadastroTabContent">
-                <!-- Conta Bancária -->
-                <div class="tab-pane fade show active" id="conta" role="tabpanel" aria-labelledby="conta-tab">
-                <form>
-                    <div class="mb-3">
-                    <label for="banco" class="form-label">Banco</label>
-                    <input type="text" class="form-control" id="banco" name="banco" required>
-                    </div>
-                    <div class="mb-3">
-                    <label for="agencia" class="form-label">Agência</label>
-                    <input type="text" class="form-control" id="agencia" name="agencia" required>
-                    </div>
-                    <div class="mb-3">
-                    <label for="numero_conta" class="form-label">Número da Conta</label>
-                    <input type="text" class="form-control" id="numero_conta" name="numero_conta" required>
-                    </div>
-                    <div class="mb-3">
-                    <label for="tipo_conta" class="form-label">Tipo de Conta</label>
-                    <input type="text" class="form-control" id="tipo_conta" name="tipo_conta" required>
-                    </div>
-                    <div class="mb-3">
-                    <label for="nome_titular" class="form-label">Nome do Titular</label>
-                    <input type="text" class="form-control" id="nome_titular" name="nome_titular" required>
-                    </div>
-                    <button type="submit" class="btn btn-salvar">Salvar</button>
-                </form>
+<!-- Modal Para Cadastro-->
+<div class="modal fade" id="cadastroModal" tabindex="-1" aria-labelledby="cadastroModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+    <div class="modal-content">
+        <!-- Ajuste do background do modal-header -->
+        <div class="modal-header">
+        <h5 class="modal-title" id="cadastroModalLabel">Cadastro de Dados</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+
+        <!-- Abas para as seções -->
+        <ul class="nav nav-tabs" id="cadastroTab" role="tablist">
+            <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="conta-tab" data-bs-toggle="tab" data-bs-target="#conta-pane" type="button" role="tab" aria-controls="conta-pane" aria-selected="true">Conta Bancária</button>
+            </li>
+            <li class="nav-item" role="presentation">
+            <button class="nav-link" id="pix-tab" data-bs-toggle="tab" data-bs-target="#pix-pane" type="button" role="tab" aria-controls="pix-pane" aria-selected="false">Pix</button>
+            </li>
+            <li class="nav-item" role="presentation">
+            <button class="nav-link" id="cartao-tab" data-bs-toggle="tab" data-bs-target="#cartao-pane" type="button" role="tab" aria-controls="cartao-pane" aria-selected="false">Cartão</button>
+            </li>
+        </ul>
+
+        <!-- Conteúdo das abas -->
+        <div class="tab-content" id="cadastroTabContent">
+            <!-- Conta Bancária -->
+            <div class="tab-pane fade show active" id="conta-pane" role="tabpanel" aria-labelledby="conta-tab">
+            <form>
+                <div class="mb-3">
+                <label for="banco" class="form-label">Banco</label>
+                <input type="text" class="form-control" id="banco" name="banco" required>
                 </div>
-    
-                <!-- Pix -->
-                <div class="tab-pane fade" id="pix" role="tabpanel" aria-labelledby="pix-tab">
-                <form>
-                    <div class="mb-3">
-                    <label for="chave_pix" class="form-label">Chave Pix</label>
-                    <input type="text" class="form-control" id="chave_pix" name="chave_pix" required>
-                    </div>
-                    <button type="submit" class="btn btn-salvar">Salvar</button>
-                </form>
+                <div class="mb-3">
+                <label for="agencia" class="form-label">Agência</label>
+                <input type="text" class="form-control" id="agencia" name="agencia" required>
                 </div>
-    
-                <!-- Cartão -->
-                <div class="tab-pane fade" id="cartao" role="tabpanel" aria-labelledby="cartao-tab">
-                <form>
-                    <div class="mb-3">
-                    <label for="numero_cartao" class="form-label">Número do Cartão</label>
-                    <input type="number" class="form-control" id="numero_cartao" name="numero_cartao" required>
-                    </div>
-                    <div class="mb-3">
-                    <label for="nome_cartao" class="form-label">Nome no Cartão</label>
-                    <input type="text" class="form-control" id="nome_cartao" name="nome_cartao" required>
-                    </div>
-                    <div class="mb-3">
-                    <label for="data_validade" class="form-label">Data de Validade</label>
-                    <input type="text" class="form-control" id="data_validade" name="data_validade" placeholder="MM/AA" required>
-                    </div>
-                    <div class="mb-3">
-                    <label for="cvv" class="form-label">CVV</label>
-                    <input type="number" class="form-control" id="cvv" name="cvv" required>
-                    </div>
-                    <button type="submit" class="btn btn-salvar">Salvar</button>
-                </form>
+                <div class="mb-3">
+                <label for="numero_conta" class="form-label">Número da Conta</label>
+                <input type="text" class="form-control" id="numero_conta" name="numero_conta" required>
                 </div>
+                <div class="mb-3">
+                <label for="tipo_conta" class="form-label">Tipo de Conta</label>
+                <input type="text" class="form-control" id="tipo_conta" name="tipo_conta" required>
+                </div>
+                <div class="mb-3">
+                <label for="nome_titular" class="form-label">Nome do Titular</label>
+                <input type="text" class="form-control" id="nome_titular" name="nome_titular" required>
+                </div>
+                <button type="submit" class="btn btn-salvar">Salvar</button>
+            </form>
             </div>
-    
+
+            <!-- Pix -->
+            <div class="tab-pane fade" id="pix-pane" role="tabpanel" aria-labelledby="pix-tab">
+            <form>
+                <div class="mb-3">
+                <label for="chave_pix" class="form-label">Chave Pix</label>
+                <input type="text" class="form-control" id="chave_pix" name="chave_pix" required>
+                </div>
+                <button type="submit" class="btn btn-salvar">Salvar</button>
+            </form>
             </div>
-            <div class="modal-footer">
-            <!-- Botão para fechar o modal -->
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+
+            <!-- Cartão -->
+            <div class="tab-pane fade" id="cartao-pane" role="tabpanel" aria-labelledby="cartao-tab">
+            <form>
+                <div class="mb-3">
+                <label for="numero_cartao" class="form-label">Número do Cartão</label>
+                <input type="number" class="form-control" id="numero_cartao" name="numero_cartao" required>
+                </div>
+                <div class="mb-3">
+                <label for="nome_cartao" class="form-label">Nome no Cartão</label>
+                <input type="text" class="form-control" id="nome_cartao" name="nome_cartao" required>
+                </div>
+                <div class="mb-3">
+                <label for="data_validade" class="form-label">Data de Validade</label>
+                <input type="text" class="form-control" id="data_validade" name="data_validade" placeholder="MM/AA" required>
+                </div>
+                <div class="mb-3">
+                <label for="cvv" class="form-label">CVV</label>
+                <input type="number" class="form-control" id="cvv" name="cvv" required>
+                </div>
+                <button type="submit" class="btn btn-salvar">Salvar</button>
+            </form>
             </div>
         </div>
+
+        </div>
+        <div class="modal-footer">
+        <!-- Botão para fechar o modal -->
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
         </div>
     </div>
+    </div>
+</div>
+
             
     
 </body>
