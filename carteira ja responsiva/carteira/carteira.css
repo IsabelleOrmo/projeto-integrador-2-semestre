@@ -1,0 +1,234 @@
+body{
+    font-family: "Instrument Sans", sans-serif;
+}
+
+.form-pesquisa {
+    display: flex;
+    width: 100%;
+    margin-right: 10%;
+    margin-left: 5%;
+    position: relative;
+    background-color: #2F7580;
+    border-radius: 100%;
+}
+
+.form-pesquisa input {
+    background-color: #2F7580;
+    border: none;
+    width: 100%; 
+    padding: 0.5rem;
+    transition: none ; 
+}
+
+
+.form-pesquisa input:focus, 
+.form-pesquisa input:active {
+    background-color: #2F7580; 
+    border: none;
+    box-shadow: none; 
+    outline: none;
+}
+
+
+.form-pesquisa input:focus:active {
+    background-color: #2F7580;
+    border: none;
+}
+
+.form-pesquisa span{
+    background-color: #2F7580; 
+    border: none;
+}
+
+.form-pesquisa input:active{
+    background-color: #2F7580; 
+    border: none;
+}
+
+.icons {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 20px; 
+}
+
+.icon-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.icon-container svg {
+    width: 30px;
+    height: auto;
+    fill: currentColor;
+}
+
+.icon-container div {
+    font-size: 12px;
+    margin-top: 5px; 
+}
+
+.carteira {
+    background-color: #EFEFEF;
+    padding: 0;
+    height: fit-content;
+    margin-bottom: 30px;  
+}
+
+.historico {
+    padding-left: 2%;
+    margin-bottom: 30px;  
+}
+
+.puta{
+    background-color: aqua;
+}
+
+.saldo{
+    font-weight: bold;
+    font-size: large;
+    padding: 3%;
+}
+
+.titulo{
+    font-weight: bold;
+    font-size: large;
+    text-align: center;
+}
+
+.saldo span{
+    padding: 1%;
+}
+
+.carteira-action{
+    background-color: #2F7580;
+}
+
+
+.collapse {
+    transition: none !important;
+}
+
+
+.accordion-item {
+    border-top: 1px solid white;  
+}
+
+
+.accordion-button {
+    background-color: #2F7580;  
+    color: black;  
+    border: none; 
+}
+
+
+.accordion-button:focus {
+    box-shadow: none;
+    border: none;
+}
+
+
+.accordion-button:not(.collapsed) {
+    background-color: #2F7580;  
+    color: black;  
+}
+    
+
+.banner-titulo {
+    margin-top: 10px; 
+}
+
+
+h3 {
+    animation: deslizar 0.5s ease-in-out;
+    font-size: 30px;
+    font-weight: bold;
+    color: #2F7580; 
+    margin-top: 40px;
+    margin-bottom: 0; 
+    display: flex;
+    align-items: center;
+    align-items: center;
+}
+
+
+.icon-carteira {
+    margin-right: 10px; 
+}
+
+
+.subtitulo {
+    animation: deslizar 0.5s ease-in-out;
+    margin-top: 0; 
+    font-size: 20px;    
+    color: #000000;
+    animation-delay: 0.2s;
+}
+
+@keyframes deslizar {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+h3 {
+    animation: deslizar 0.5s ease-in-out;
+}
+
+.subtitulo {
+    animation: deslizar 0.5s ease-in-out;
+}
+
+.btn-ajustado {
+    width: 100%;
+    max-width: 200px; /* Ajuste conforme necessário */
+}
+
+
+
+.modal-header {
+    background-color: #2F7580;
+  }
+
+.modal-title {
+    color: #fff;
+  }
+
+.btn-salvar {
+    background-color: #2F7580;
+    color: #fff;
+    border: none;
+  }
+
+  .btn-salvar:hover {
+    background-color: #27626B;
+  }
+
+  /* Abas não selecionadas com cor #2F7580 */
+  .nav-tabs .nav-link {
+    color: #fff;
+    background-color: #2F7580;
+    border-color: #dee2e6 #dee2e6 #fff;
+  }
+
+  /* Aba selecionada */
+  .nav-tabs .nav-link.active {
+    color: #2F7580;
+    background-color: #fff;
+    border-color: #dee2e6 #dee2e6 #fff;
+  }
+
+@media  (min-width: 300px) and (max-width: 980px) {
+    .form-pesquisa {
+        width: 50%;
+        margin-left: 0%;
+        margin-right: 0%;
+        position: relative;
+        flex-wrap: nowrap;
+    }
+
+    .icons {
+        gap: 10px;
+    }
+}
