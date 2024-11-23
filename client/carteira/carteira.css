@@ -134,11 +134,90 @@ body{
     background-color: #2F7580;  
     color: black;  
 }
+    
 
-h3{
-    padding: 2%;
+.banner-titulo {
+    margin-top: 10px; 
 }
 
+
+h3 {
+    animation: deslizar 0.5s ease-in-out;
+    font-size: 30px;
+    font-weight: bold;
+    color: #2F7580; 
+    margin-top: 40px;
+    margin-bottom: 0; 
+    display: flex;
+    align-items: center;
+    align-items: center;
+}
+
+
+.icon-carteira {
+    margin-right: 10px; 
+}
+
+
+.subtitulo {
+    animation: deslizar 0.5s ease-in-out;
+    margin-top: 0; 
+    font-size: 20px;    
+    color: #000000;
+    animation-delay: 0.2s;
+}
+
+@keyframes deslizar {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+h3 {
+    animation: deslizar 0.5s ease-in-out;
+}
+
+.subtitulo {
+    animation: deslizar 0.5s ease-in-out;
+}
+
+.btn-ajustado {
+    width: 100%;
+    max-width: 200px; /* Ajuste conforme necessário */
+}
+
+
+
+.modal-header {
+    background-color: #2F7580;
+  }
+
+.modal-title {
+    color: #fff;
+  }
+
+.btn-salvar {
+    background-color: #2F7580;
+    color: #fff;
+    border: none;
+  }
+
+  .btn-salvar:hover {
+    background-color: #27626B;
+  }
+
+  /* Abas não selecionadas com cor #2F7580 */
+  .nav-tabs .nav-link {
+    color: #fff;
+    background-color: #2F7580;
+    border-color: #dee2e6 #dee2e6 #fff;
+  }
+
+  /* Aba selecionada */
+  .nav-tabs .nav-link.active {
+    color: #2F7580;
+    background-color: #fff;
+    border-color: #dee2e6 #dee2e6 #fff;
+  }
 
 @media  (min-width: 300px) and (max-width: 980px) {
     .form-pesquisa {
