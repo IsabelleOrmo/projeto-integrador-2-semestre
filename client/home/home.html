@@ -57,6 +57,7 @@
             </div>
         </div>
     </nav>
+    <div id="welcome"></div>
     <div class="container">
         <!-- Eventos disponíveis -->
         <div class="event-section">
@@ -107,10 +108,35 @@
         </div>
       </div>
 <script>
+
         var eventsContainer = document.getElementById('events');
         var eventsContainerMaisApostados = document.getElementById('eventos-apostados');
     
         // Função para buscar eventos disponíveis
+        document.addEventListener("DOMContentLoaded", async () => {
+            try {
+                const reqHeaders = new Headers();
+                reqHeaders.append("Content-Type", "application/json");
+                reqHeaders.append("connection", "keep-alive");
+            const res = await fetch("http://localhost:5000/check-session", {
+            method: "GET",
+            headers: reqHeaders,
+            credentials: "include", // Inclui cookies na requisição
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            document.getElementById("welcome").innerText = `Bem-vindo(a), ${data.user.email}!`;
+        } else {
+            // Redirecionar para login se não autenticado
+            //window.location.href = "../login/login.html";
+            console.log(res);
+        }
+    } catch (error) {
+        console.error("Erro ao verificar sessão:", error);
+    }
+});
+
         async function requestAvailableEvents() {
             try {
                 const resEvent = await fetch("http://localhost:5000/availableEvents", {

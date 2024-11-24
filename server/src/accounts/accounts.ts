@@ -73,37 +73,48 @@ export namespace AccountsHandler {
         }
     }
     
-    
 
-    export const loginHandler: RequestHandler = async (req: Request, res: Response) => {
-        const { email: pEmail, password: pPassword } = req.body; 
-    
-        if (pEmail && pPassword) {
-            try {
-                const role = await verifyRole(pEmail);
+export const loginHandler: RequestHandler = async (req: Request, res: Response) => {
+    const { email: pEmail, password: pPassword } = req.body;
+
+    if (pEmail && pPassword) {
+        try {
+            const role = await verifyRole(pEmail);
+            const result = await login(pEmail, pPassword);
+
+            if (Array.isArray(result) && result.length > 0) { // Se houver resultado da função login
+                // Armazena os dados do usuário na sessão
                 req.session.user = {
                     email: pEmail,
-                    isAdmin: role.includes(1),
-                 }
-                    const result =  await login(pEmail, pPassword); 
-                    if (Array.isArray(result) && result.length>0) {  // Se houver resultado da função login
-                        if (role.includes(1)) { // Verifica se o role contém 1
-                            res.status(200).send('Login realizado... confira...');
-                        } else {
-                            res.status(200).send('Bem-vindo administrador');
-                        }
-                    } else {
-                        res.status(404).send('Email ou senha não encontrados. Não tem conta? Cadastre-se.');
-                    }
-            } catch (error) {
-                console.error('Erro ao realizar login:', error);
-                res.status(500).send('Erro ao realizar login.'); 
+                    role: role,
+                };
+
+                if (role.includes(1)) { // Verifica se o role contém 1
+                    res.status(200).json({
+                        message: "Login realizado com sucesso.",
+                        role: "Usuário",
+                    });
+                } else {
+                    res.status(200).json({
+                        message: "Bem-vindo administrador.",
+                        role: "Administrador",
+                    });
+                }
+            } else {
+                res.status(404).json({
+                    message: "Email ou senha não encontrados. Não tem conta? Cadastre-se.",
+                });
             }
-        } else {
-            res.status(400).send('Requisição inválida - Parâmetros faltando.'); 
+        } catch (error) {
+            console.error("Erro ao realizar login:", error);
+            res.status(500).json({ message: "Erro ao realizar login." });
         }
-    };
-    
+    } else {
+        res.status(400).json({
+            message: "Requisição inválida - Parâmetros faltando.",
+        });
+    }
+};    
 
         async function verifyEmail(email: string) {
             OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
@@ -312,5 +323,7 @@ export namespace AccountsHandler {
             res.status(400).send('Requisição inválida - Parâmetros faltando.'); 
         }
     }
-    
+
+
+
 }
