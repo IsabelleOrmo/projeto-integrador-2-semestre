@@ -70,6 +70,21 @@ export namespace WalletHandler {
         );
         
     
+        await connection.commit();
+        await connection.close();
+    }    
+
+
+    
+    async function addTransacaoDeposito(id_usuario: number, valor: number) {
+        OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
+    
+        const connection = await OracleDB.getConnection({
+            user: process.env.ORACLE_USER,
+            password: process.env.ORACLE_PASSWORD,
+            connectString: process.env.ORACLE_CONN_STR
+        });
+        
         await connection.execute(
             `INSERT INTO TRANSACAO (ID_TRANSACAO, ID_USUARIO, VALOR, TIPO, DATA_TRANSACAO) 
              VALUES (SEQ_TRANSACAO.NEXTVAL, :id_usuario, :valor, 'DEPÓSITO', SYSDATE)`,  
@@ -79,6 +94,7 @@ export namespace WalletHandler {
         await connection.commit();
         await connection.close();
     }    
+
 
     async function withdrawFunds(id_usuario: number, valor: number) {
         OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
@@ -295,7 +311,7 @@ export namespace WalletHandler {
     }
 
     export const addFundsHandler: RequestHandler = async (req: Request, res: Response) => {
-        const token = req.get('token');
+        const token = req.cookies.token;
         const { valor } = req.body;
     
         
@@ -324,12 +340,10 @@ export namespace WalletHandler {
         }
     
         try {
-    
-
-
             const valorAtual = await getWalletFunds(id_usuario);
             const valorTransacao = valorAtual + valor;
             await addFunds(id_usuario, valorTransacao);
+            await addTransacaoDeposito(id_usuario, valor);
             res.status(201).send('Valor adicionado.'); 
     
         } catch (error) {

@@ -15,6 +15,8 @@
     <link rel="icon" type="image/x-icon" href="../imagens/favicon.ico">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>
+
 </head>
 <body>
     <nav class="navbar navbar-expand-lg" style="background-color: #A5D4FB; padding: 0;">
@@ -75,7 +77,7 @@
         </div>
         <div class="row">
             <div class="col-md-8 carteira">
-                <div class="saldo">SALDO: <span>R$100,01</span></div>
+                <div class="saldo">SALDO: <span id="balance"></span></div>
                 <div class="accordion" id="accordionPanelsStayOpenExample">
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="panelsStayOpen-headingOne">
@@ -85,10 +87,10 @@
                         </h2>
                         <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingOne">
                             <div class="accordion-body">
-                                <form>
+                                <form onsubmit="addFunds(event)">
                                     <div class="d-flex align-items-center">
                                         <label for="recarga" class="me-2">Valor: </label>
-                                        <input type="number" name="recarga" id="recarga" class="form-control me-2" required>
+                                        <input type="number" min="1" name="recarga" id="recarga" class="form-control me-2" required>
                                         <button type="submit" class="btn btn-primary ms-auto btn-carteira">Recarregar</button>
                                     </div>
                                 </form>
@@ -106,7 +108,7 @@
                                 <form>
                                     <div class="d-flex align-items-center">
                                         <label for="saque" class="me-2">Valor: </label>
-                                        <input type="number" name="saque" id="saque" class="form-control me-3" style="max-width: 150px;" required>
+                                        <input type="number" min="1" name="saque" id="saque" class="form-control me-3" style="max-width: 150px;" required>
                                         
                                         <div class="form-check me-3">
                                             <input type="radio" name="opcao" id="pix" class="form-check-input" required>
@@ -247,69 +249,7 @@
     </div>
 </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // Aguarda 500ms antes de chamar getHistory para garantir que o cookie seja carregado
-        setTimeout(() => {
-            getHistory();
-        }, 500);
-    });
-
-    async function getHistory() {
-        try {
-            const reqHeaders = new Headers();
-                reqHeaders.append("Content-Type", "application/json");
-                
-            // Faz a requisição para o backend para obter o histórico
-            const response = await fetch('http://127.0.0.1:5000/getHistory', {
-                method: 'GET',
-                headers: reqHeaders,
-                credentials: 'include'
-            });
-
-
-            if (response.ok) {
-                const history = await response.json();
-                displayHistory(history);
-            } else {
-                const errorMessage = await response.text();
-                alert('Erro ao obter o histórico: ' + errorMessage);
-            }
-        } catch (error) {
-            console.error('Erro ao fazer a requisição:', error);
-            alert('Erro ao fazer a requisição ao servidor.');
-        }
-    }
-
-    // Função para exibir o histórico na tabela
-    function displayHistory(history) {
-        const tbody = document.querySelector('#historico'); // Corrigido para usar '#historico'
-        
-        if (!tbody) {
-            console.error('Elemento tbody não encontrado!');
-            return; // Para a execução da função se o elemento não for encontrado
-        }
-
-        tbody.innerHTML = ''; // Limpa o conteúdo da tabela
-
-        history.forEach(item => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>R$${item.VALOR.toFixed(2)}</td>
-                <td>${item.TIPO}</td>
-                <td>${item.DATA_TRASACAO}</td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
-
-    // Função auxiliar para obter o valor de um cookie pelo nome
-    function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(';').shift();
-    }
-</script>
+<script src="carteira.js"></script>
 
     
 </body>

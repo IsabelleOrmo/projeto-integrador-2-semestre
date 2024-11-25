@@ -93,7 +93,7 @@ export namespace AccountsHandler {
                     res.cookie('token', token, {
                         httpOnly: true,
                         secure: false, // Defina como `false` para ambiente local sem HTTPS
-                        sameSite: 'none' // 'lax' para permitir cookies entre origens diferentes em ambiente local
+                        sameSite: 'lax' // 'lax' para permitir cookies entre origens diferentes em ambiente local
                     });
     
                     res.status(200).json({
@@ -135,6 +135,31 @@ export namespace AccountsHandler {
 
         return verify.rows;
     }
+
+    async function getBalance(id_usuario: number) {
+        OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
+    
+        const connection = await OracleDB.getConnection({
+            user: process.env.ORACLE_USER,
+            password: process.env.ORACLE_PASSWORD,
+            connectString: process.env.ORACLE_CONN_STR
+        });
+    
+        const result = await connection.execute<{ VALOR: number }>(
+            `SELECT VALOR FROM CARTEIRA WHERE ID_USUARIO = :id_usuario`,
+            [id_usuario]
+        );
+    
+        await connection.close();
+    
+       
+        if (result.rows && result.rows.length > 0) {
+            return { VALOR: result.rows[0].VALOR };
+        } else {
+            return { VALOR: 0 }; 
+        }
+    }
+    
 
     async function singUp(completeName: string, email: string, password: string, birthday: string) {
         OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
@@ -243,7 +268,7 @@ export namespace AccountsHandler {
         });
 
         const result = await connection.execute(
-            `SELECT ID_TRANSACAO, ID_USUARIO, ID_EVENTO, VALOR, TIPO, TO_CHAR(DATA_TRANSACAO, 'YYYY-MM-DD HH24:MI:SS') AS DATA_TRASACAO FROM TRANSACAO WHERE ID_USUARIO = :id_usuario`,
+            `SELECT ID_TRANSACAO, ID_USUARIO, ID_EVENTO, VALOR, TIPO, TO_CHAR(DATA_TRANSACAO, 'YYYY-MM-DD HH24:MI:SS') AS DATA_TRASACAO FROM TRANSACAO WHERE ID_USUARIO = :id_usuario ORDER BY DATA_TRANSACAO DESC`,
             [id_usuario]
         );
 
@@ -313,6 +338,23 @@ export namespace AccountsHandler {
                 res.status(404).send("Histórico não encontrado");
                 return;
             }
+        } else {
+            res.status(400).send('Requisição inválida - Parâmetros faltando.');
+        }
+    };
+
+    export const getBalanceHandler: RequestHandler = async (req: Request, res: Response) => {
+        const token = req.cookies.token;
+        //const token = req.get('token');
+        if (token) {
+            const id_usuario = await userId(token);
+            if (!id_usuario) {
+                res.status(400).send('Parâmetros faltando. Tente logar novamente.');
+                return;
+            }
+    
+            const balance = await getBalance(id_usuario);
+            res.status(200).json(balance);
         } else {
             res.status(400).send('Requisição inválida - Parâmetros faltando.');
         }

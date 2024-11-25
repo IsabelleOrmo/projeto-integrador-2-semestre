@@ -88,6 +88,8 @@ routes.post('/betOnEvent', BetHandler.betOnEventHandler);
 routes.patch('/finishEvent', ClosingBetsHandler.finishEventHandler);
 routes.get('/getHistory', AccountsHandler.getHistoryHandler);
 routes.post('/addDadosBancarios', Dados_BancariosHandler.addDadosBancariosHandler);
+routes.get('/getBalance', AccountsHandler.getBalanceHandler);
+
 app.use(routes);
 
 app.listen(port, ()=>{
