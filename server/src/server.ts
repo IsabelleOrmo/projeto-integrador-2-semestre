@@ -89,7 +89,7 @@ routes.patch('/finishEvent', ClosingBetsHandler.finishEventHandler);
 routes.get('/getHistory', AccountsHandler.getHistoryHandler);
 routes.post('/addDadosBancarios', Dados_BancariosHandler.addDadosBancariosHandler);
 routes.get('/getBalance', AccountsHandler.getBalanceHandler);
-
+routes.get('/getCartao', WalletHandler.getCartaoHandler);
 app.use(routes);
 
 app.listen(port, ()=>{

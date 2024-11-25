@@ -92,8 +92,8 @@ export namespace AccountsHandler {
     
                     res.cookie('token', token, {
                         httpOnly: true,
-                        secure: false, // Defina como `false` para ambiente local sem HTTPS
-                        sameSite: 'lax' // 'lax' para permitir cookies entre origens diferentes em ambiente local
+                        secure: false, // 
+                        sameSite: 'lax' 
                     });
     
                     res.status(200).json({

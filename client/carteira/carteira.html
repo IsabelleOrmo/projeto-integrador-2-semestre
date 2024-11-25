@@ -207,7 +207,7 @@
 
             <!-- Pix -->
             <div class="tab-pane fade" id="pix-pane" role="tabpanel" aria-labelledby="pix-tab">
-            <form>
+            <form id="formPix">
                 <div class="mb-3">
                 <label for="chave_pix" class="form-label">Chave Pix</label>
                 <input type="text" class="form-control" id="chave_pix" name="chave_pix" required>
@@ -218,25 +218,25 @@
 
             <!-- Cartão -->
             <div class="tab-pane fade" id="cartao-pane" role="tabpanel" aria-labelledby="cartao-tab">
-            <form>
-                <div class="mb-3">
-                <label for="numero_cartao" class="form-label">Número do Cartão</label>
-                <input type="number" class="form-control" id="numero_cartao" name="numero_cartao" required>
-                </div>
-                <div class="mb-3">
-                <label for="nome_cartao" class="form-label">Nome no Cartão</label>
-                <input type="text" class="form-control" id="nome_cartao" name="nome_cartao" required>
-                </div>
-                <div class="mb-3">
-                <label for="data_validade" class="form-label">Data de Validade</label>
-                <input type="text" class="form-control" id="data_validade" name="data_validade" placeholder="MM/AA" required>
-                </div>
-                <div class="mb-3">
-                <label for="cvv" class="form-label">CVV</label>
-                <input type="number" class="form-control" id="cvv" name="cvv" required>
-                </div>
-                <button type="submit" style="border-radius: 50px" class="btn btn-salvar">Salvar</button>
-            </form>
+                <form id="formCartao">
+                    <div class="mb-3">
+                        <label for="numero_cartao" class="form-label">Número do Cartão</label>
+                        <input type="number" class="form-control" id="numero_cartao" name="numero_cartao" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="nome_cartao" class="form-label">Nome no Cartão</label>
+                        <input type="text" class="form-control" id="nome_cartao" name="nome_cartao" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="data_validade" class="form-label">Data de Validade</label>
+                        <input type="text" class="form-control" id="data_validade" name="data_validade" placeholder="DD/MM/YYYY" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cvv" class="form-label">CVV</label>
+                        <input type="number" class="form-control" id="cvv" name="cvv" required>
+                    </div>
+                    <button type="submit" class="btn btn-salvar">Salvar</button>
+                </form>                
             </div>
         </div>
 

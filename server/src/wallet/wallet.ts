@@ -68,13 +68,11 @@ export namespace WalletHandler {
             `UPDATE CARTEIRA SET VALOR = :valor WHERE ID_USUARIO = :id_usuario`, 
             { valor, id_usuario } 
         );
-        
     
         await connection.commit();
         await connection.close();
     }    
-
-
+ 
     
     async function addTransacaoDeposito(id_usuario: number, valor: number) {
         OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
@@ -351,5 +349,37 @@ export namespace WalletHandler {
             res.status(500).send('Erro.'); 
         }
     }
+
+    export const getCartaoHandler: RequestHandler = async (req: Request, res: Response) => {
+        const token = req.cookies.token;
+    
+        if (typeof token !== 'string') {
+            res.status(400).send('Requisição inválida - tente logar novamente.');
+            return; 
+        }
+
+        const id_usuario = await userId(token);
+
+        if (id_usuario === null) {
+            res.status(401).send('Acesso não permitido. Tente logar novamente.');
+            return;
+        }
+
+        try {
+            const verificaCartao = await getCartao(id_usuario);
+            if (Array.isArray(verificaCartao) && verificaCartao.length>0) {
+                res.status(200).send('OK cartão existe');
+                return;
+            } else {
+                res.status(404).send('Cartão não encontrado.');
+                return; 
+            }
+    
+        } catch (error) {
+            console.error('Erro:', error);
+            res.status(500).send('Erro.'); 
+        }
+    }
+
 
 }

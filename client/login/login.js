@@ -24,9 +24,8 @@ async function signIn() {
                 
             }, 1500);
         } else {
-            const errorMessage = await res.text(); // Lê o erro retornado do servidor
-            // showMessage(errorMessage, 'error');
-            await showAlert(errorMessage,'danger');
+            const errorMessage = await res.text(); 
+           alert(errorMessage);
         }
     }
 }
