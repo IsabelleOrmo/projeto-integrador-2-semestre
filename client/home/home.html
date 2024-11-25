@@ -183,9 +183,6 @@
         </div>
     </div>
     
-    
-
-    
     <script>
         // Seleciona o contêiner onde os eventos disponíveis serão exibidos
         var eventsContainer = document.getElementById('events');
@@ -209,21 +206,21 @@
             const resEvent = await fetch("http://localhost:5000/availableEvents", {
                 method: "GET"
             });
-
+        
             if (resEvent.ok) {
             let eventsData = await resEvent.json();
-
+        
             // Remove duplicados com base no ID_EVENTO
             eventsData = eventsData.filter((event, index, self) =>
                 index === self.findIndex(e => e.ID_EVENTO === event.ID_EVENTO)
             );
-
+        
             // Armazena os eventos únicos em allEvents
             allEvents = eventsData;
             
                 // Preenche os cartões de eventos disponíveis
                 fillAvailableEventCards(allEvents);
-
+        
                 // Preenche o dropdown de categorias
                 populateCategoryDropdown(allEvents);
             } else {
@@ -232,8 +229,8 @@
         } catch (error) {
             console.error("Erro ao buscar eventos disponíveis:", error);
         }
-    }
-
+        }
+        
         
         /**
          * Função para preencher os cartões de eventos disponíveis na página.
@@ -376,7 +373,7 @@
             // Chama a função de filtragem com o termo de busca
             filterEvents(searchTerm);
         });
-
+        
         /**
          * Função para extrair categorias únicas dos eventos e preencher o dropdown,
          * tratando as categorias de forma insensível a maiúsculas e minúsculas.
@@ -384,10 +381,10 @@
          */
         function populateCategoryDropdown(events) {
             const categoryFilter = document.getElementById('categoryFilter');
-
+        
             // Cria um Map para rastrear categorias únicas de forma insensível a maiúsculas e minúsculas
             const categoryMap = new Map();
-
+        
             events.forEach(event => {
                 const categoryOriginal = event.CATEGORIA.trim();
                 const categoryLower = categoryOriginal.toLowerCase();
@@ -395,16 +392,16 @@
                     categoryMap.set(categoryLower, categoryOriginal);
                 }
             });
-
+        
             // Obtém as categorias únicas preservando a capitalização original da primeira ocorrência
             const uniqueCategories = Array.from(categoryMap.values());
-
+        
             // Opcional: Ordena as categorias alfabeticamente
             uniqueCategories.sort((a, b) => a.localeCompare(b));
-
+        
             // Limpa as opções atuais, exceto "Todas as Categorias"
             categoryFilter.innerHTML = '<option value="all">Todas as Categorias</option>';
-
+        
             // Adiciona cada categoria única como uma opção no dropdown
             uniqueCategories.forEach(category => {
                 const option = document.createElement('option');
@@ -414,32 +411,32 @@
                 categoryFilter.appendChild(option);
             });
         }
-
-
+        
+        
         /**
          * Função para exibir eventos filtrados por categoria.
          * @param {string} category - Categoria selecionada pelo usuário.
          */
         function displayEventsByCategory(category) {
             const eventsByCategoryContainer = document.getElementById('eventsByCategory');
-
+        
             // Limpa o conteúdo atual
             eventsByCategoryContainer.innerHTML = '';
-
+        
             // Filtra os eventos com base na categoria selecionada
             const filteredEvents = category === 'all' 
                 ? allEvents 
                 : allEvents.filter(event => event.CATEGORIA === category);
-
+        
             if (filteredEvents.length === 0) {
                 eventsByCategoryContainer.innerHTML = '<p>Nenhum evento encontrado para esta categoria.</p>';
                 return;
             }
-
+        
             // Itera sobre os eventos filtrados e cria os cartões
             filteredEvents.forEach(event => {
                 const valorCotaFormatado = parseFloat(event.VALOR_COTA).toFixed(2);
-
+        
                 const eventCard = 
                     `<div class="event-card">
                         <h3>${event.TITULO}</h3>
@@ -451,25 +448,25 @@
                             Apostar
                         </button>
                     </div>`;
-
+        
                 eventsByCategoryContainer.insertAdjacentHTML('beforeend', eventCard);
             });
         }
-
+        
         // Adiciona um listener para mudanças no dropdown de categorias
         document.getElementById('categoryFilter').addEventListener('change', (event) => {
             const selectedCategory = event.target.value;
             displayEventsByCategory(selectedCategory);
         });
-
-
-
-
-
-
-
-
-
+        
+        
+        
+        
+        
+        
+        
+        
+        
         
         // Executa as funções de busca de eventos quando o DOM é completamente carregado
         document.addEventListener('DOMContentLoaded', () => {
@@ -485,6 +482,5 @@
         
         <!-- Script principal do Bootstrap que habilita funcionalidades como modals, dropdowns, etc. -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
-        
 </body>
 </html>

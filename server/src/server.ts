@@ -6,20 +6,65 @@ import { WalletHandler } from "./wallet/wallet";
 import { BetHandler } from "./bets/bets";
 import { ClosingBetsHandler } from "./bets/closingBets";
 import { Dados_BancariosHandler } from "./wallet/dados_bancarios";
-import OracleDB from 'oracledb';
 import dotenv from 'dotenv'; 
 import cors from "cors"
-import bodyParser from "body-parser";
+import session from 'express-session';
+import cookieParser from "cookie-parser";
 
 
 const port = 5000; 
 const app = express();
 const routes = Router();
 
-app.use(cors());
+const allowedOrigins = ['http://localhost:5501', 'http://127.0.0.7:5501'];
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+}));
+
 dotenv.config();
+
+app.use((req, res, next) => {
+    const origin = req.headers.origin;
+    if (origin && allowedOrigins.includes(origin)) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
+    }
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    next();
+});
+
+
+// Middleware para cookies
+app.use(cookieParser());
 app.use(express.json());
-app.use(bodyParser.json());
+
+
+declare global {
+    namespace Express{
+      interface Request {
+        token?: string;
+        role?: number;
+      }
+    }    
+  }
+
+app.use(session({
+    secret: 'chavesecreta',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: false,
+        httpOnly: true
+    }
+  }));
 
 routes.get('/', (req: Request, res: Response)=>{
     res.statusCode = 403;

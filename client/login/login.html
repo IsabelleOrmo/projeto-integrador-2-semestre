@@ -23,7 +23,7 @@
       <img src="../imagens/logo.png" alt="Logo da empresa">
       <h1>Bem-Vindo De Volta</h1>
     </div>
-    <form class="login-form" onsubmit="return login(event);">
+    <form class="login-form" onsubmit="event.preventDefault(); signIn();"">
       <label for="email">Email:</label>
       <input type="email" id="email" name="email" required>
 
@@ -36,51 +36,6 @@
       <p>Não tem conta? <a href="../cadastro/cadastro.html">Cadastre-se</a></p>
     </div>
   </div>
-
-  <script>
-    async function login(event) {
-        event.preventDefault(); // Evita envio padrão do formulário
-
-        const email = document.getElementById("email").value;
-        const senha = document.getElementById("senha").value;
-
-        try {
-            const resLogin = await fetch("http://localhost:5000/login", {
-                method: "POST", 
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    email: email,
-                    password: senha
-                })
-            });
-
-            if (resLogin.status === 200) {
-                window.location.href = "../home/home.html";
-            } else if (resLogin.status === 400) {
-                alert("Campos obrigatórios faltando");
-            } else if (resLogin.status === 404){
-              Swal.fire({
-                  title: "Email ou senha não encontrados",
-                  text: "Não tem conta? Cadastre-se.",
-                  icon: "error"
-                });
-            }
-            else {
-              Swal.fire({
-                  title: "Erro",
-                  text: "Erro inesperado ao fazer login. Tente novamente mais tarde.",
-                  icon: "question"
-                });
-            }
-        } catch (error) {
-            console.error("Erro ao tentar logar:", error);
-            alert("Erro inesperado. Tente novamente mais tarde.");
-        }
-    }
-
-  </script>
-
+<script src="./login.js"></script>
 </body>
 </html>

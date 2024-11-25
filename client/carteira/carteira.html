@@ -143,17 +143,8 @@
                                 <th scope="col">Data</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>R$50,00</td>
-                                <td>Depósito</td>
-                                <td>2024-11-10</td>
-                            </tr>
-                            <tr>
-                                <td>R$100,00</td>
-                                <td>Aposta</td>
-                                <td>2024-11-12</td>
-                            </tr>
+                        <tbody id="historico">
+                           
                         </tbody>
                     </table>
                 </div>
@@ -256,7 +247,70 @@
     </div>
 </div>
 
-            
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Aguarda 500ms antes de chamar getHistory para garantir que o cookie seja carregado
+        setTimeout(() => {
+            getHistory();
+        }, 500);
+    });
+
+    async function getHistory() {
+        try {
+            const reqHeaders = new Headers();
+                reqHeaders.append("Content-Type", "application/json");
+                
+            // Faz a requisição para o backend para obter o histórico
+            const response = await fetch('http://127.0.0.1:5000/getHistory', {
+                method: 'GET',
+                headers: reqHeaders,
+                credentials: 'include'
+            });
+
+
+            if (response.ok) {
+                const history = await response.json();
+                displayHistory(history);
+            } else {
+                const errorMessage = await response.text();
+                alert('Erro ao obter o histórico: ' + errorMessage);
+            }
+        } catch (error) {
+            console.error('Erro ao fazer a requisição:', error);
+            alert('Erro ao fazer a requisição ao servidor.');
+        }
+    }
+
+    // Função para exibir o histórico na tabela
+    function displayHistory(history) {
+        const tbody = document.querySelector('#historico'); // Corrigido para usar '#historico'
+        
+        if (!tbody) {
+            console.error('Elemento tbody não encontrado!');
+            return; // Para a execução da função se o elemento não for encontrado
+        }
+
+        tbody.innerHTML = ''; // Limpa o conteúdo da tabela
+
+        history.forEach(item => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>R$${item.VALOR.toFixed(2)}</td>
+                <td>${item.TIPO}</td>
+                <td>${item.DATA_TRASACAO}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // Função auxiliar para obter o valor de um cookie pelo nome
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+</script>
+
     
 </body>
 </html>
