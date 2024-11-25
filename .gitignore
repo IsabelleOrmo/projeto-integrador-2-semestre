@@ -4,3 +4,4 @@ package-lock.json
 server/build
 raw.txt
 closure.txt
+.vscode

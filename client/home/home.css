@@ -1,5 +1,5 @@
- /* Estilo Geral */
- body {
+/* Estilo Geral */
+body {
     font-family: "Instrument Sans", Arial, sans-serif;
     margin: 0;
     padding: 0;
@@ -44,6 +44,15 @@
     border: none;
 }
 
+/* Estilo do Logotipo na Navbar */
+.navbar-brand img {
+    transition: transform 0.3s; /* Transição suave para o hover */
+    cursor: pointer; /* Muda o cursor para indicar que o logotipo é clicável */
+}
+
+.navbar-brand img:hover {
+    transform: scale(1.1); /* Aumenta o tamanho do logotipo ao passar o mouse */
+}
 
 /* Estilo dos Ícones */
 .icons {
@@ -58,6 +67,13 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
+    min-width: 50px; /* Mantém um tamanho mínimo consistente para ícone e texto */
+    transition: transform 0.3s; /* Transição suave para o hover */
+    cursor: pointer; /* Muda o cursor para indicar que o ícone é clicável */
+}
+
+.icon-container:hover {
+    transform: scale(1.1); /* Aumenta o tamanho do ícone ao passar o mouse */
 }
 
 .icon-container svg {
@@ -66,10 +82,20 @@
     fill: currentColor;
 }
 
+.icon-container {
+    min-width: 50px; /* Mantém um tamanho mínimo consistente para o ícone e texto */
+}
+
 .icon-container div {
     font-size: 12px;
     margin-top: 5px;
+    transition: font-weight 0.3s; /* Transição suave para o peso da fonte */
 }
+
+.icon-container:hover div {
+    font-weight: bold; /* Deixa o texto em negrito ao passar o mouse */
+}
+
 
 /* Responsividade */
 @media  (min-width: 300px) and (max-width: 980px) {
@@ -105,60 +131,125 @@ h2 {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 25px; /* Espaçamento entre os cartões */
+    padding: 20px;
+    background-color: #F5F5F5; /* Fundo sutil para destacar os cartões */
 }
 
 /* Cartão de Evento */
 .event-card {
-    background: #FFFFFF;
-    border: 1px solid #A5D4FB; /* Azul claro */
-    border-radius: 5px;
-    padding: 15px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, #ffffff, #f0f9ff); /* Gradiente sutil */
+    border: none;
+    border-radius: 15px; /* Bordas mais arredondadas */
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s; /* Transição para elevação */
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 10px; /* Espaçamento interno entre os elementos do cartão */
+    gap: 15px; /* Espaçamento interno entre os elementos do cartão */
     font-size: 14px;
 }
 
+.event-card:hover {
+    transform: translateY(-10px); /* Efeito de elevação */
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Sombra mais forte ao passar o mouse */
+}
+
 .event-card h3 {
-    font-size: 1.2em;
+    font-size: 1.4em;
     margin: 0;
-    color: #000000; /* Preto */
+    color: #2F7580; /* Azul escuro */
 }
 
 .event-card .data-evento {
-    top: 15px;
-    right: 15px;
     font-weight: bold;
-    color: #000000; /* Preto */
+    color: #2F7580; /* Azul escuro */
 }
 
 .event-card .descricao {
-    margin-top: 10px;
     font-style: italic;
-    color: #000000; /* Preto */
+    color: #555555; /* Cinza para um tom mais suave */
 }
 
 .event-card .valor,
 .event-card .data-fim {
     margin: 0;
-    color: #000000; /* Preto */
+    color: #333333; /* Tom mais escuro para contraste */
 }
 
 /* Botão de Aposta */
 .event-card button {
     align-self: flex-end;
-    background-color: #A5D4FB; /* Azul claro */
-    color: #000000; /* Preto */
+    background-color: #2F7580; /* Azul escuro */
+    color: #FFFFFF; /* Branco */
     border: none;
     padding: 10px 20px;
-    border-radius: 5px;
+    border-radius: 50px; /* Botão em forma de pílula */
     cursor: pointer;
     font-weight: bold;
+    transition: background-color 0.3s, transform 0.3s; /* Transição para cores e elevação */
+    margin-top: auto; /* Garante que o botão seja empurrado para o final do cartão */
 }
 
 .event-card button:hover {
+    background-color: #A5D4FB; /* Azul claro ao passar o mouse */
+    color: #000000; /* Preto para contraste */
+    transform: scale(1.05); /* Leve aumento de tamanho no hover */
+}
+
+
+/* Botão Criar Evento */
+.btn-large {
+    padding: 10px 20px;
+    border-radius: 50px; /* Formato de pílula para consistência */
+    font-size: 18px;
     background-color: #2F7580; /* Azul escuro */
     color: #FFFFFF; /* Branco */
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.3s; /* Transição suave para o hover */
+}
+
+.btn-large:hover {
+    background-color: #A5D4FB; /* Azul claro ao passar o mouse */
+    color: #000000; /* Preto para contraste */
+    transform: scale(1.05); /* Leve aumento de tamanho no hover */
+}
+
+/* Modifica o background do titulo ao abrir o modal */
+.modal-header {
+    background-color: #2F7580; /* Cor de fundo */
+    color: white;             /* Cor do texto */
+}
+
+
+
+/* Estilo para o Dropdown de Categorias */
+.category-dropdown select {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 10px; /* Bordas arredondadas */
+    border: 1px solid #A5D4FB; /* Borda azul clara */
+    background-color: #FFFFFF; /* Fundo branco */
+    color: #2F7580; /* Texto azul escuro */
+    transition: all 0.3s ease; /* Transição suave */
+    outline: none; /* Remove o contorno ao clicar */
+    cursor: pointer; /* Indica que é clicável */
+}
+
+.category-dropdown select:hover {
+    border: 1px solid #2F7580; /* Muda a cor da borda ao passar o mouse */
+    box-shadow: 0 0 5px rgba(47, 117, 128, 0.5); /* Sombra ao passar o mouse */
+}
+
+.category-dropdown select:focus {
+    border: 1px solid #2F7580; /* Borda destacada no foco */
+    box-shadow: 0 0 8px rgba(47, 117, 128, 0.7); /* Sombra maior ao focar */
+}
+
+.category-dropdown {
+    width: 250px; /* Define a largura do dropdown */
+    margin-bottom: 15px; /* Espaçamento inferior */
 }

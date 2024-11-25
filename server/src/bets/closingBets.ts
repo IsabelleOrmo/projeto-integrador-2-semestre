@@ -9,7 +9,8 @@ export namespace ClosingBetsHandler {
         id_evento: number | undefined; 
         id_usuario: number;            
         titulo: string;                 
-        descricao: string;              
+        descricao: string;   
+        carteira: string;           
         valor_cota: number;             
         data_hora_inicio: string;        
         data_hora_fim: string;          

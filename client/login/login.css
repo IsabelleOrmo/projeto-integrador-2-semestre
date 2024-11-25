@@ -1,11 +1,14 @@
 /* Reset básico */
 body, html {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Instrument Sans', sans-serif;
-    background-color: #f7f9fc;
-  }
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Instrument Sans', sans-serif;
+  background: linear-gradient(135deg, #f0f9ff, #c2e9fb); /* Fundo com gradiente suave */
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+}
   
   /* Container principal */
   .container {
@@ -30,13 +33,21 @@ body, html {
   .logo img {
     width: 300px;
     height: 300px;
-  }
-  
-  .logo h1 {
-    font-size: 24px;
-    color: #333;
-    margin-top: 10px;
-  }
+    transition: transform 0.3s ease; /* Transição suave para o efeito de transformação */
+}
+
+.logo img:hover {
+    transform: scale(1.05); /* Aumenta o tamanho da imagem em 5% ao passar o mouse */
+}
+
+
+.logo h1 {
+  font-size: 36px; 
+  color: #333;
+  margin-top: 10px;
+  font-weight: bold; 
+}
+
   
   /* Formulário */
   .login-form {
@@ -46,32 +57,42 @@ body, html {
   }
   
   .login-form label {
-    font-size: 14px;
+    font-size: 18px; /* Fonte um pouco maior para melhorar a leitura */
     text-align: left;
-  }
-  
-  .login-form input {
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #A5D4FB;
-    border-radius: 5px;
-    background-color: #A5D4FB;
-  }
-  
-  .login-form button {
-    padding: 10px;
-    font-size: 16px;
-    background-color: #006d6f;
-    color: rgb(0, 0, 0);
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .login-form button:hover {
-    background-color: #2F7580;
-  }
+    color: #2F7580; /* Azul escuro */
+    font-weight: bold;
+}
+
+.login-form input {
+  padding: 15px;
+  font-size: 18px; /* Fonte maior para melhorar a usabilidade */
+  border: 2px solid #A5D4FB;
+  border-radius: 10px;
+  background-color: #f7f9fc;
+  transition: all 0.3s ease;
+}
+
+.login-form input:focus {
+  border-color: #2F7580;
+  box-shadow: 0 0 8px rgba(47, 117, 128, 0.5);
+  outline: none;
+}
+
+.login-form button {
+  padding: 15px;
+  font-size: 18px; /* Fonte maior para o botão */
+  background: linear-gradient(135deg, #131414, #2F7580);
+  color: #ffffff;
+  border: none;
+  border-radius: 25px; 
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s ease, transform 0.3s ease; 
+}
+
+.login-form button:hover {
+  transform: scale(1.05); 
+}
   
   /* Cadastro link */
   .cadastro {
@@ -88,5 +109,6 @@ body, html {
   }
   
   .cadastro a:hover {
+    color: #006d6f;
     text-decoration: underline;
-  }
+}

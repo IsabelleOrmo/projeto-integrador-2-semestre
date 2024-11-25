@@ -6,40 +6,36 @@
   <title>Cadastro</title>
   <link rel="stylesheet" href="./cadastro.css">
   <link rel="icon" type="image/x-icon" href="../imagens/favicon.ico">
-    <!-- Link para Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <div class="container">
     <div class="logo">
           <img src="../imagens//logo.png" alt="Logo da empresa">
-          <h1>Bem-vindo</h1>
+          <h1>Seja Bem-Vindo</h1>
         </div>
   <div class="form-container">
     <form  onsubmit="return singUp(event);"">
       <div class="row">
         <div class="form-group">
-          <label for="nome">Nome *</label>
+          <label for="nome">Nome:</label>
           <input type="text" id="nome" name="nome" required>
         </div>
         <div class="form-group">
-          <label for="sobrenome">Sobrenome *</label>
+          <label for="sobrenome">Sobrenome:</label>
           <input type="text" id="sobrenome" name="sobrenome" required>
         </div>
       </div>
       <div class="form-group">
-        <label for="data-nascimento">Data de Nascimento *</label>
+        <label for="data-nascimento">Data de Nascimento:</label>
         <input type="date" id="data-nascimento" name="data-nascimento" required>
       </div>
       <div class="form-group">
-        <label for="email">E-mail *</label>
+        <label for="email">E-mail:</label>
         <input type="email" id="email" name="email" required>
       </div>
       <div class="form-group">
-        <label for="senha">Senha *</label>
+        <label for="senha">Senha:</label>
         <input type="password" id="senha" name="senha" minlength="5" placeholder="Mínimo de 5 caracteres" required>
       </div>
       <button type="submit">Enviar</button>

@@ -1,4 +1,3 @@
-
 /*ORACLE*/
 DROP TABLE TRANSACAO;
 DROP TABLE APOSTA;
@@ -48,7 +47,8 @@ CREATE TABLE EVENTS (
     id_evento INTEGER NOT NULL PRIMARY KEY,
     id_usuario INT NOT NULL,
     titulo VARCHAR2(50) NOT NULL,
-    descricao VARCHAR2(150) NOT NULL, 
+    descricao VARCHAR2(150) NOT NULL,
+    categoria VARCHAR2(150) NOT NULL,   
     valor_cota FLOAT NOT NULL,
     data_hora_inicio TIMESTAMP NOT NULL,  
     data_hora_fim TIMESTAMP NOT NULL,     

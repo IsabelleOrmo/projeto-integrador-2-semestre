@@ -2,6 +2,7 @@ body{
     font-family: "Instrument Sans", sans-serif;
 }
 
+/* Estilo do Formulário de Pesquisa */
 .form-pesquisa {
     display: flex;
     width: 100%;
@@ -15,11 +16,15 @@ body{
 .form-pesquisa input {
     background-color: #2F7580;
     border: none;
-    width: 100%; 
+    width: 100%;
     padding: 0.5rem;
-    transition: none ; 
+    outline: none;
+    box-shadow: none;
 }
 
+.form-pesquisa input:focus {
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Destaque no foco */
+}
 
 .form-pesquisa input:focus, 
 .form-pesquisa input:active {
@@ -29,27 +34,27 @@ body{
     outline: none;
 }
 
-
-.form-pesquisa input:focus:active {
-    background-color: #2F7580;
-    border: none;
-}
-
-.form-pesquisa span{
+.form-pesquisa span {
     background-color: #2F7580; 
     border: none;
 }
 
-.form-pesquisa input:active{
-    background-color: #2F7580; 
-    border: none;
+/* Estilo do Logotipo na Navbar */
+.navbar-brand img {
+    transition: transform 0.3s; /* Transição suave para o hover */
+    cursor: pointer; /* Muda o cursor para indicar que o logotipo é clicável */
 }
 
+.navbar-brand img:hover {
+    transform: scale(1.1); /* Aumenta o tamanho do logotipo ao passar o mouse */
+}
+
+/* Estilo dos Ícones */
 .icons {
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    gap: 20px; 
+    gap: 20px;
 }
 
 .icon-container {
@@ -57,6 +62,13 @@ body{
     flex-direction: column;
     align-items: center;
     text-align: center;
+    min-width: 50px; /* Mantém um tamanho mínimo consistente para ícone e texto */
+    transition: transform 0.3s; /* Transição suave para o hover */
+    cursor: pointer; /* Muda o cursor para indicar que o ícone é clicável */
+}
+
+.icon-container:hover {
+    transform: scale(1.1); /* Aumenta o tamanho do ícone ao passar o mouse */
 }
 
 .icon-container svg {
@@ -67,7 +79,12 @@ body{
 
 .icon-container div {
     font-size: 12px;
-    margin-top: 5px; 
+    margin-top: 5px;
+    transition: font-weight 0.3s; /* Transição suave para o peso da fonte */
+}
+
+.icon-container:hover div {
+    font-weight: bold; /* Deixa o texto em negrito ao passar o mouse */
 }
 
 .carteira {
@@ -79,7 +96,8 @@ body{
 
 .historico {
     padding-left: 2%;
-    margin-bottom: 30px;  
+    margin-bottom: 40px;  
+    margin-top: -25px; /* Usa um valor negativo para mover a div para cima */
 }
 
 .puta{
@@ -147,11 +165,11 @@ h3 {
     font-weight: bold;
     color: #2F7580; 
     margin-top: 40px;
-    margin-bottom: 0; 
+    margin-bottom: 0;   
     display: flex;
-    align-items: center;
-    align-items: center;
+    align-items: center; 
 }
+
 
 
 .icon-carteira {
@@ -164,7 +182,7 @@ h3 {
     margin-top: 0; 
     font-size: 20px;    
     color: #000000;
-    animation-delay: 0.2s;
+    animation-delay: 0.1s;
 }
 
 @keyframes deslizar {
@@ -176,13 +194,31 @@ h3 {
     animation: deslizar 0.5s ease-in-out;
 }
 
-.subtitulo {
-    animation: deslizar 0.5s ease-in-out;
-}
 
 .btn-ajustado {
     width: 100%;
     max-width: 200px; /* Ajuste conforme necessário */
+}
+
+/* Estilo do Botão "Criar Evento" e "CADASTRAR DADOS" */
+.btn-large {
+    align-self: flex-end;
+    background-color: #2F7580;
+    color: #FFFFFF;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.3s;
+    margin-top: auto;
+}
+
+
+.btn-large:hover {
+    background-color: #A5D4FB ; /* Azul claro ao passar o mouse */
+    color: #000000 ; /* Preto para contraste */
+    transform: scale(1.05) ; /* Leve aumento de tamanho no hover */
 }
 
 

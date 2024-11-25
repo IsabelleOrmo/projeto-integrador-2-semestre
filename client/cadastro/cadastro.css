@@ -1,141 +1,151 @@
 /* RESET E CONFIGURAÇÕES BÁSICAS */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  body {
-    font-family: 'Instrument Sans', sans-serif;
-    background-color: #f9f9f9;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  /* ESTILO DO FORMULÁRIO */
-  .form-container {
-    background-color: #006d6f;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 400px;
-  }
-  
-  form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  
-  /* LINHA PARA CAMPOS LADO A LADO */
-  .row {
-    display: flex;
-    gap: 10px; /* Espaço entre os campos */
-  }
-  
-  .row .form-group {
-    flex: 1; /* Faz os campos ocuparem o mesmo tamanho */
-  }
-  
-  /* GRUPO DE FORMULÁRIO */
-  .form-group {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  label {
-    font-size: 14px;
-    margin-bottom: 5px;
-    font-weight: bold;
-  }
-  
-  input {
-    padding: 10px;
-    border: 1px solid #A5D4FB;
-    border-radius: 4px;
-    font-size: 14px;
-  }
-  
-  input:focus {
-    outline: none;
-    border-color: #A5D4FB;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-  }
-  
-  input::placeholder {
-    color: #aaa;
-    font-size: 12px;
-  }
-  
-  /* BOTÃO DE SUBMIT */
-  button {
-    padding: 7px;
-    background-color: #2F7580;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
-    font-weight: bold;
-    text-transform: uppercase;
-  }
-  
-  button:hover {
-    background-color: #0056b3;
-  }
-  
-  /* AJUSTE DOS CAMPOS "NOME" E "SOBRENOME" */
-  .row {
-    display: flex;
-    justify-content: space-between; /* Mantém os campos alinhados */
-  }
-  
-  .row input {
-    width: 88%; /* Divide o espaço de forma equilibrada */
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-  /* login link */
-  .login {
-    margin-top: 10px;
-  }
-  
-  .login p {
-    text-align: center;
-    font-size: 14px;
-  }
-  
-  .login a {
-    color: #000000;
-    text-decoration: underline black;
-  }
-  
-  .login a:hover {
-    text-decoration: underline;
-  }
+body {
+  font-family: 'Instrument Sans', sans-serif;
+  background: linear-gradient(135deg, #f0f9ff, #c2e9fb); /* Fundo com gradiente suave */
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-  .container {
-    width: 100%;
-    max-width: 400px;
-    margin: 50px auto;
-    padding: 20px;
-    background-color: #ffffff;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    text-align: center;
-  }
-  
-  /* Logo */
-  .logo {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  
-  .logo img {
-    width: 300px;
-    height: 300px;
-  }
-  
+/* CONTAINER PRINCIPAL */
+.container {
+  width: 100%;
+  max-width: 400px; /* Diminuí a largura máxima para tornar o container menor */
+  margin: 50px auto; /* Ajustei o espaço ao redor para um visual mais compacto */
+  padding: 20px; /* Reduzi o padding interno */
+  background-color: #ffffff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  border-radius: 15px; /* Bordas ligeiramente mais arredondadas */
+  text-align: center;
+}
+
+/* LOGO */
+.logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px; /* Menor espaço entre a logo e o formulário */
+}
+
+.logo img {
+  width: 180px; /* Reduzi o tamanho da logo para se adequar ao container menor */
+  height: auto;
+  transition: transform 0.3s ease; /* Transição suave para o efeito de transformação */
+  cursor: pointer; /* Indica que a imagem é interativa */
+}
+
+.logo img:hover {
+  transform: scale(1.05); /* Aumenta o tamanho da imagem em 5% ao passar o mouse */
+}
+
+/* FORMULÁRIO */
+.form-container {
+  background-color: #2F7580; /* Fundo do formulário mais escuro para contraste */
+  padding: 20px; /* Reduzi o padding para compactar o visual */
+  border-radius: 15px; /* Bordas ligeiramente mais arredondadas */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Menor espaço entre os elementos do formulário */
+}
+
+/* LINHA PARA CAMPOS LADO A LADO */
+.row {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.row .form-group {
+  flex: 1;
+}
+
+.row input {
+  width: 100%; /* Ajuste para garantir que os campos ocupem toda a largura */
+}
+
+/* GRUPO DE FORMULÁRIO */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Reduzi o gap para compactar o layout */
+}
+
+.form-group label {
+  font-size: 16px; /* Fonte menor para se adequar ao container menor */
+  text-align: left;
+  color: #ffffff; /* Tornar a cor do texto mais branca para um contraste melhor com fundo escuro */
+  font-weight: bold;
+}
+
+.form-group input {
+  padding: 10px; /* Reduzi o padding dos campos para um layout mais compacto */
+  font-size: 16px; /* Fonte ligeiramente menor para se adequar ao espaço reduzido */
+  border: 2px solid #A5D4FB;
+  border-radius: 8px;
+  background-color: #f7f9fc;
+  transition: all 0.3s ease;
+  color: #333; /* Tornar o texto do input mais escuro para maior contraste */
+}
+
+.form-group input:focus {
+  border-color: #004a4b;
+  box-shadow: 0 0 8px rgba(47, 117, 128, 0.5);
+  outline: none;
+}
+
+input::placeholder {
+  color: #666; /* Tornar o placeholder mais escuro para facilitar a leitura */
+  font-size: 14px;
+}
+
+/* BOTÃO DE SUBMIT */
+.form-container button {
+  padding: 12px; /* Reduzi o padding do botão */
+  font-size: 16px; /* Fonte menor para um botão mais compacto */
+  background: linear-gradient(135deg, #131414, #2F7580);
+  color: #ffffff;
+  border: none;
+  border-radius: 25px; 
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.form-container button:hover {
+  background-color: #0056b3; /* Altera a cor do botão ao passar o mouse */
+  transform: scale(1.05);
+}
+
+/* LINK DE LOGIN */
+.login {
+  margin-top: 15px; /* Menor espaçamento entre o formulário e o link de login */
+}
+
+.login p {
+  text-align: center;
+  font-size: 14px; /* Fonte menor para harmonizar com o layout mais compacto */
+  color: #ffffff; /* Cor branca para maior contraste */
+}
+
+.login a {
+  color: #ffffff; /* Azul claro para se destacar no fundo escuro */
+  text-decoration: none;
+  transition: color 0.3s ease;
+  text-decoration: underline
+}
+
+.login a:hover {
+  color: #A5D4FB/* Branco ao passar o mouse para destacar mais o link */
+}

@@ -83,11 +83,6 @@ export const loginHandler: RequestHandler = async (req: Request, res: Response) 
             const result = await login(pEmail, pPassword);
 
             if (Array.isArray(result) && result.length > 0) { // Se houver resultado da função login
-                // Armazena os dados do usuário na sessão
-                req.session.user = {
-                    email: pEmail,
-                    role: role,
-                };
 
                 if (role.includes(1)) { // Verifica se o role contém 1
                     res.status(200).json({
