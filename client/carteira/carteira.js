@@ -14,6 +14,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (formPix) {
         formPix.addEventListener('submit', addPix);
     }
+
+    const formConta = document.getElementById('formConta');
+    if (formConta) {
+        formConta.addEventListener('submit', addContaBancaria);
+    }
 });
 
 
@@ -155,7 +160,7 @@ async function addCreditCard(event) {
             cvv: document.getElementById('cvv').value
         };
 
-        const response = await fetch('http://127.0.0.1:5000addDadosBancarios', {
+        const response = await fetch('http://127.0.0.1:5000/addDadosBancarios', {
             method: 'POST',
             headers: { "Content-Type": "application/json" },
             credentials: 'include',
@@ -169,7 +174,14 @@ async function addCreditCard(event) {
                 icon: "success"
             });
             closeModal();
-        } else {
+        } else if (response.status == 400) {
+            Swal.fire({
+                title: "Cartão já cadastrado!",
+                text: "Você já tem um cartão de crédito já cadastrado.",
+                icon: "error"
+            });
+        }
+        else {
             const errorMessage = await response.text();
             handleError(errorMessage, 'Erro ao cadastrar o cartão.');
         }
@@ -183,7 +195,7 @@ async function addPix(event) {
     event.preventDefault();
 
     try {
-        const pix = document.getElementById('pix').value;
+        const pix = document.getElementById('chave_pix').value;
 
         const response = await fetch('http://127.0.0.1:5000/addDadosBancarios', {
             method: 'POST',
@@ -215,6 +227,51 @@ async function addPix(event) {
     }
 }
 
+// Função para adicionar uma conta bancária
+async function addContaBancaria(event) {
+    event.preventDefault();
+
+    const data = {
+        banco: document.getElementById('banco').value,
+        agencia: document.getElementById('agencia').value,
+        numero_conta: document.getElementById('numero_conta').value,
+        tipo_conta: document.getElementById('tipo_conta').value,
+        nome_titular: document.getElementById('nome_titular').value
+    };
+
+
+    try {
+
+        const response = await fetch('http://127.0.0.1:5000/addDadosBancarios', {
+            method: 'POST',
+            headers: { "Content-Type": "application/json" },
+            credentials: 'include',
+            body: JSON.stringify({data})
+        });
+
+
+        if (response.ok) {
+            Swal.fire({
+                title: "Conta bancária cadastrada!",
+                text: "Conta bancária cadastrada com sucesso",
+                icon: "success"
+            });
+            closeModal();
+        } else if (response.status == 400) {
+            Swal.fire({
+                title: "Conta bancária já cadastrado!",
+                text: "Você já tem uma conta bancária cadastrada.",
+                icon: "error"
+            });
+        }
+        else {
+            const errorMessage = await response.text();
+            handleError(errorMessage, 'Erro ao cadastrar o conta bancária.');
+        }
+    } catch (error) {
+        handleError(error);
+    }
+}
 
 // Função para fechar o modal de cadastro
 function closeModal() {

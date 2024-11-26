@@ -22,7 +22,7 @@ async function signIn() {
             setTimeout(() => {
                     window.location.href = '../carteira/carteira.html';
                 
-            }, 1500);
+            }, 500);
         } else {
             const errorMessage = await res.text(); 
            alert(errorMessage);

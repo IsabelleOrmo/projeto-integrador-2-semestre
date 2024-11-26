@@ -70,7 +70,7 @@ export namespace Dados_BancariosHandler {
                 `SELECT * FROM DADOS_BANCARIOS WHERE ID_USUARIO = :id_usuario`,
                 [id_usuario]
             );
-
+            
             if (result.rows && result.rows.length > 0) {
                 const row = result.rows[0] as any;
                 const dadosBancarios: Dados_Bancarios = {
@@ -165,7 +165,7 @@ export namespace Dados_BancariosHandler {
     export const addDadosBancariosHandler: RequestHandler = async (req, res): Promise<void> => {
         const token = req.cookies.token;
         const { chave_pix, banco, agencia, numero_conta, tipo_conta, nome_titular, cvv, data_validade, numero_cartao, nome_cartao } = req.body;
-        
+                            
         if (typeof token !== 'string') {
             res.status(400).send('Requisição inválida - tente logar novamente.');
             return;
@@ -179,9 +179,10 @@ export namespace Dados_BancariosHandler {
         
         try {
             const dadosBancarios = await getDadosBancarios(id_usuario);
-        
+            
+            console.log(dadosBancarios?.nome_cartao);
             if (chave_pix) {
-                if (dadosBancarios?.chave_pix) {
+                if (dadosBancarios?.chave_pix!=null) {
                     res.status(400).send('Chave-pix já cadastrado.');
                     return;
                 } else {

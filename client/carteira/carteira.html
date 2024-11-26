@@ -180,7 +180,7 @@
         <div class="tab-content" id="cadastroTabContent">
             <!-- Conta Bancária -->
             <div class="tab-pane fade show active" id="conta-pane" role="tabpanel" aria-labelledby="conta-tab">
-            <form>
+            <form id="formConta">
                 <div class="mb-3">
                 <label for="banco" class="form-label">Banco</label>
                 <input type="text" class="form-control" id="banco" name="banco" required>
@@ -194,9 +194,15 @@
                 <input type="text" class="form-control" id="numero_conta" name="numero_conta" required>
                 </div>
                 <div class="mb-3">
-                <label for="tipo_conta" class="form-label">Tipo de Conta</label>
-                <input type="text" class="form-control" id="tipo_conta" name="tipo_conta" required>
-                </div>
+                    <label for="tipo_conta" class="form-label">Tipo de Conta</label>
+                    <select class="form-select" id="tipo_conta" name="tipo_conta" required>
+                        <option value="" disabled selected>Selecione o tipo de conta</option>
+                        <option value="corrente">Conta Corrente</option>
+                        <option value="poupanca">Conta Poupança</option>
+                        <option value="salario">Conta Salário</option>
+                        <option value="pagamento">Conta de Pagamento</option>
+                    </select>
+                </div>                
                 <div class="mb-3">
                 <label for="nome_titular" class="form-label">Nome do Titular</label>
                 <input type="text" class="form-control" id="nome_titular" name="nome_titular" required>
