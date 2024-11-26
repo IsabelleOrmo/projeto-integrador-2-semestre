@@ -32,14 +32,19 @@ app.use(cors({
 dotenv.config();
 
 app.use((req, res, next) => {
-    const origin = req.headers.origin;
-    if (origin && allowedOrigins.includes(origin)) {
+  const origin = req.headers.origin;
+  if (origin && allowedOrigins.includes(origin)) {
       res.setHeader('Access-Control-Allow-Origin', origin);
-    }
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    next();
+      res.setHeader('Vary', 'Origin'); 
+  }
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+  res.setHeader(
+      'Access-Control-Allow-Headers',
+      'Content-Type, Authorization, X-Requested-With'
+  );
+  res.setHeader("Content-Type", "application/json");
+  next();
 });
 
 
@@ -63,7 +68,8 @@ app.use(session({
     saveUninitialized: false,
     cookie: {
         secure: false,
-        httpOnly: true
+        httpOnly: true,
+        sameSite: 'none'
     }
   }));
 

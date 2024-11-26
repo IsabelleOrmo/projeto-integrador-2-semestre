@@ -90,11 +90,7 @@ export namespace AccountsHandler {
                 if (Array.isArray(result) && result.length > 0) { // Se houver resultado da função login
                     const token = result[0].TOKEN;
     
-                    res.cookie('token', token, {
-                        httpOnly: true,
-                        secure: false, // 
-                        sameSite: 'lax' 
-                    });
+                    res.setHeader('Set-Cookie', `token=${token}; Path=/; HttpOnly; Secure; SameSite=None`);
     
                     res.status(200).json({
                         message: "Bem-vindo administrador.",
