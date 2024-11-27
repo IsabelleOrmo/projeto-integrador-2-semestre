@@ -148,6 +148,106 @@ async function addFunds(event) {
     }
 }
 
+// Função para saque
+async function withdrawFunds(event) {
+    event.preventDefault();
+
+    try {
+        const valor = parseFloat(document.getElementById('saqueValor').value);
+
+            const addFundsResponse = await fetch('http://127.0.0.1:5000/withdrawFunds', {
+                method: 'PATCH',
+                headers: { "Content-Type": "application/json" },
+                credentials: 'include',
+                body: JSON.stringify({ valor })
+            });
+
+        if (addFundsResponse.ok) {
+                Swal.fire({
+                    title: "Valor sacado!",
+                    text: "Saque realizado com sucesso",
+                    icon: "success"
+                });
+                getBalance();
+                getHistory();
+                document.getElementById('saqueValor').value = '1'; // Limpa o formulário
+            } else {
+                const errorMessage = await addFundsResponse.text();
+                Swal.fire({
+                    title: "Erro!",
+                    text: errorMessage,
+                    icon: "error"
+                });
+            }
+        } catch (error) {
+             handleError(error);
+        }
+}
+
+//Funcao para verificar metodo de saque
+async function verificaSaque(event) {
+    event.preventDefault();
+
+    const tipoConta = document.querySelector('input[name="opcao"]:checked');
+    if (!tipoConta) {
+        Swal.fire({
+            title: "Erro",
+            text: "Selecione um método de saque (PIX ou Conta Bancária).",
+            icon: "error"
+        });
+        return;
+    }
+
+    if (tipoConta.value === 'pix') {
+        try {
+            const response = await fetch('http://127.0.0.1:5000/getPix', {
+                method: 'GET',
+                headers: { "Content-Type": "application/json" },
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                await withdrawFunds(event);
+            } else if (response.status === 404) {
+                Swal.fire({
+                    title: "Chave PIX não encontrada!",
+                    text: "Cadastre uma chave PIX para realizar o saque.",
+                    icon: "error"
+                });
+            } else {
+                const errorMessage = await response.text();
+                handleError(errorMessage, 'Erro ao verificar o PIX.');
+            }
+        } catch (error) {
+            handleError(error);
+        }
+    } else if (tipoConta.value === 'contaBancaria') {
+        try {
+            const response = await fetch('http://127.0.0.1:5000/getContaBancaria', {
+                method: 'GET',
+                headers: { "Content-Type": "application/json" },
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                await withdrawFunds(event);
+            } else if (response.status === 404) {
+                Swal.fire({
+                    title: "Conta bancária não encontrada!",
+                    text: "Cadastre uma conta bancária para realizar o saque.",
+                    icon: "error"
+                });
+            } else {
+                const errorMessage = await response.text();
+                handleError(errorMessage, 'Erro ao verificar a conta bancária.');
+            }
+        } catch (error) {
+            handleError(error);
+        }
+    }
+}
+
+
 // Função para adicionar um cartão de crédito
 async function addCreditCard(event) {
     event.preventDefault();
@@ -239,16 +339,16 @@ async function addContaBancaria(event) {
         nome_titular: document.getElementById('nome_titular').value
     };
 
-
+    console.log(document.getElementById('tipo_conta').value);
     try {
-
         const response = await fetch('http://127.0.0.1:5000/addDadosBancarios', {
             method: 'POST',
             headers: { "Content-Type": "application/json" },
             credentials: 'include',
-            body: JSON.stringify({data})
+            body: JSON.stringify(data)
         });
 
+        console.log(response);
 
         if (response.ok) {
             Swal.fire({
@@ -257,16 +357,12 @@ async function addContaBancaria(event) {
                 icon: "success"
             });
             closeModal();
-        } else if (response.status == 400) {
+        } else {
             Swal.fire({
                 title: "Conta bancária já cadastrado!",
                 text: "Você já tem uma conta bancária cadastrada.",
                 icon: "error"
             });
-        }
-        else {
-            const errorMessage = await response.text();
-            handleError(errorMessage, 'Erro ao cadastrar o conta bancária.');
         }
     } catch (error) {
         handleError(error);

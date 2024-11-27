@@ -104,24 +104,21 @@
                         </h2>
                         <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
                             <div class="accordion-body">
-                                <form>
+                                <form onsubmit="verificaSaque(event)">
                                     <div class="d-flex align-items-center">
                                         <label for="saque" class="me-2">Valor: </label>
-                                        <input type="number" min="1" name="saque" id="saque" class="form-control me-3" style="max-width: 150px;" required>
-                                        
+                                        <input type="number" min="1" name="saque" id="saqueValor" class="form-control me-3" style="max-width: 150px;" required>
                                         <div class="form-check me-3">
-                                            <input type="radio" name="opcao" id="pix" class="form-check-input" required>
+                                            <input type="radio" name="opcao" id="pix" class="form-check-input" value="pix" required>
                                             <label for="pix" class="form-check-label">PIX</label>
                                         </div>
-                                        
                                         <div class="form-check me-3">
-                                            <input type="radio" name="opcao" id="conta" class="form-check-input" required>
+                                            <input type="radio" name="opcao" id="conta" class="form-check-input" value="contaBancaria" required>
                                             <label for="conta" class="form-check-label">Conta Bancária</label>
-                                        </div>
-                                        
+                                        </div>                                        
                                         <button type="submit" class="btn btn-primary ms-auto btn-carteira">Sacar</button>
                                     </div>
-                                </form>                            
+                                </form>                         
                             </div>
                         </div>
                     </div>

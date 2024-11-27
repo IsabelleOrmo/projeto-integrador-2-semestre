@@ -74,7 +74,7 @@ export namespace WalletHandler {
     }    
  
     
-    async function addTransacaoDeposito(id_usuario: number, valor: number) {
+    async function addTransacao(id_usuario: number, valor: number, tipo: string) {
         OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
     
         const connection = await OracleDB.getConnection({
@@ -85,8 +85,8 @@ export namespace WalletHandler {
         
         await connection.execute(
             `INSERT INTO TRANSACAO (ID_TRANSACAO, ID_USUARIO, VALOR, TIPO, DATA_TRANSACAO) 
-             VALUES (SEQ_TRANSACAO.NEXTVAL, :id_usuario, :valor, 'DEPÓSITO', SYSDATE)`,  
-            [id_usuario, valor]
+             VALUES (SEQ_TRANSACAO.NEXTVAL, :id_usuario, :valor, :tipo, SYSDATE)`,  
+            [id_usuario, valor, tipo]
         );
     
         await connection.commit();
@@ -107,12 +107,6 @@ export namespace WalletHandler {
             `UPDATE CARTEIRA SET VALOR = :valor 
              WHERE ID_USUARIO = :id_usuario`, 
             [valor, id_usuario]
-        );
-    
-        await connection.execute(
-            `INSERT INTO TRANSACAO (ID_TRANSACAO, ID_USUARIO, VALOR, TIPO, DATA_TRANSACAO) 
-             VALUES (SEQ_TRANSACAO.NEXTVAL, :id_usuario, :valor, 'SAQUE', SYSDATE)`,  
-            [id_usuario, valor]
         );
     
         await connection.commit();
@@ -246,9 +240,9 @@ export namespace WalletHandler {
     
 
     export const withdrawFundsHandler: RequestHandler = async (req: Request, res: Response) => {
-        const token = req.get('token');
+        const token = req.cookies.token;
         const { valor } = req.body;
-    
+        const tipo = "SAQUE";
         
         if (typeof token !== 'string') {
             res.status(400).send('Requisição inválida - tente logar novamente.');
@@ -300,6 +294,7 @@ export namespace WalletHandler {
     
             const valorFinal = valorAtualCarteira - valorTaxa;
             await withdrawFunds(id_usuario, valorFinal);
+            await addTransacao(id_usuario, valor, tipo);
             res.status(201).send('Saque realizado com sucesso.'); 
     
         } catch (error) {
@@ -311,7 +306,7 @@ export namespace WalletHandler {
     export const addFundsHandler: RequestHandler = async (req: Request, res: Response) => {
         const token = req.cookies.token;
         const { valor } = req.body;
-    
+        
         
         if (typeof token !== 'string') {
             res.status(400).send('Requisição inválida - tente logar novamente.');
@@ -339,9 +334,10 @@ export namespace WalletHandler {
     
         try {
             const valorAtual = await getWalletFunds(id_usuario);
+            const tipo = "DEPÓSITO ";
             const valorTransacao = valorAtual + valor;
             await addFunds(id_usuario, valorTransacao);
-            await addTransacaoDeposito(id_usuario, valor);
+            await addTransacao(id_usuario, valor, tipo);
             res.status(201).send('Valor adicionado.'); 
     
         } catch (error) {
@@ -366,8 +362,8 @@ export namespace WalletHandler {
         }
 
         try {
-            const verificaCartao = await getCartao(id_usuario);
-            if (Array.isArray(verificaCartao) && verificaCartao.length>0) {
+            const verifica = await getCartao(id_usuario);
+            if (Array.isArray(verifica) && verifica.length>0) {
                 res.status(200).send('OK cartão existe');
                 return;
             } else {
@@ -381,5 +377,65 @@ export namespace WalletHandler {
         }
     }
 
+    export const getPixHandler: RequestHandler = async (req: Request, res: Response) => {
+        const token = req.cookies.token;
+    
+        if (typeof token !== 'string') {
+            res.status(400).send('Requisição inválida - tente logar novamente.');
+            return; 
+        }
 
+        const id_usuario = await userId(token);
+
+        if (id_usuario === null) {
+            res.status(401).send('Acesso não permitido. Tente logar novamente.');
+            return;
+        }
+
+        try {
+            const verifica = await getPix(id_usuario);
+            if (Array.isArray(verifica) && verifica.length>0) {
+                res.status(200).send('OK pix existe');
+                return;
+            } else {
+                res.status(404).send('Pix não encontrado.');
+                return; 
+            }
+    
+        } catch (error) {
+            console.error('Erro:', error);
+            res.status(500).send('Erro.'); 
+        }
+    }
+
+    export const getContaBancariaHandler: RequestHandler = async (req: Request, res: Response) => {
+        const token = req.cookies.token;
+    
+        if (typeof token !== 'string') {
+            res.status(400).send('Requisição inválida - tente logar novamente.');
+            return; 
+        }
+
+        const id_usuario = await userId(token);
+
+        if (id_usuario === null) {
+            res.status(401).send('Acesso não permitido. Tente logar novamente.');
+            return;
+        }
+
+        try {
+            const verifica = await getContaBancaria(id_usuario);
+            if (Array.isArray(verifica) && verifica.length>0) {
+                res.status(200).send('OK conta existe');
+                return;
+            } else {
+                res.status(404).send('Conta bancária não encontrado.');
+                return; 
+            }
+    
+        } catch (error) {
+            console.error('Erro:', error);
+            res.status(500).send('Erro.'); 
+        }
+    }
 }

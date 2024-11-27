@@ -20,7 +20,7 @@ async function signIn() {
 
         if (res.ok) {
             setTimeout(() => {
-                    window.location.href = '../carteira/carteira.html';
+                    window.location.href = '../home/home.html';
                 
             }, 500);
         } else {

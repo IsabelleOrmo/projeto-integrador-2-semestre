@@ -97,6 +97,9 @@ routes.get('/getHistory', AccountsHandler.getHistoryHandler);
 routes.post('/addDadosBancarios', Dados_BancariosHandler.addDadosBancariosHandler);
 routes.get('/getBalance', AccountsHandler.getBalanceHandler);
 routes.get('/getCartao', WalletHandler.getCartaoHandler);
+routes.get('/getPix', WalletHandler.getPixHandler);
+routes.get('/getContaBancaria', WalletHandler.getContaBancariaHandler);
+
 app.use(routes);
 
 app.listen(port, ()=>{

@@ -179,8 +179,7 @@ export namespace Dados_BancariosHandler {
         
         try {
             const dadosBancarios = await getDadosBancarios(id_usuario);
-            
-            console.log(dadosBancarios?.nome_cartao);
+
             if (chave_pix) {
                 if (dadosBancarios?.chave_pix!=null) {
                     res.status(400).send('Chave-pix já cadastrado.');
@@ -190,26 +189,26 @@ export namespace Dados_BancariosHandler {
                     res.status(201).send('PIX cadastrado com sucesso.');
                     return;
                 }    
-
             }
-    
-            if (banco && agencia && numero_conta && tipo_conta && nome_titular) {
-                if (dadosBancarios?.banco != null) {
-                    res.status(400).send('Conta bancária já cadastrado.');
-                    return;
-                } else {
-                    await addContaBanco(id_usuario, banco, agencia, numero_conta, tipo_conta, nome_titular);
-                    res.status(201).send('Conta bancária cadastrada com sucesso.');
-                    return;
-                }
-            }
+            
     
             if (cvv && data_validade && numero_cartao && nome_cartao) {
-                if (dadosBancarios?.nome_cartao != null) {
+                if (dadosBancarios?.nome_cartao!=null) {
                     res.status(400).send('Cartão já cadastrado.');
                     return;
                 } else{
                     await addCartao(id_usuario, cvv, data_validade, numero_cartao, nome_cartao);
+                    res.status(201).send('Cartão cadastrado com sucesso.');
+                    return;
+                }
+            }
+
+            if (banco && agencia && numero_conta && tipo_conta && nome_titular) {
+                if (dadosBancarios?.banco!=null) {
+                    res.status(400).send('conta já cadastrado.');
+                    return;
+                } else{
+                    await addContaBanco(id_usuario, banco, agencia, numero_conta, tipo_conta, nome_titular);
                     res.status(201).send('Cartão cadastrado com sucesso.');
                     return;
                 }

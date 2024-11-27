@@ -11,6 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Mingzat&display=swap" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="../imagens/favicon.ico">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg" style="background-color: #A5D4FB; padding: 0;">
@@ -114,7 +115,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="createEventForm">
+                    <form id="createEventForm" onsubmit="addNewEvent(event)">
                         <div class="mb-3">
                             <label for="eventTitle" class="form-label">Título do Evento</label>
                             <input type="text" class="form-control" id="eventTitle" placeholder="Digite o título" required>
@@ -133,15 +134,15 @@
                         </div>
                         <div class="mb-3">
                             <label for="eventStartTime" class="form-label">Data e Hora de Início</label>
-                            <input type="datetime-local" class="form-control" id="eventStartTime" required>
+                            <input type="text" class="form-control" id="eventStartTime" required>
                         </div>
                         <div class="mb-3">
                             <label for="eventEndTime" class="form-label">Data e Hora de Encerramento</label>
-                            <input type="datetime-local" class="form-control" id="eventEndTime" required>
+                            <input type="text" class="form-control" id="eventEndTime" required>
                         </div>
                         <div class="mb-3">
                             <label for="eventDate" class="form-label">Data do Evento</label>
-                            <input type="date" class="form-control" id="eventDate" required>
+                            <input type="text" class="form-control" id="eventDate" required>
                         </div>
                         <button type="submit" class="btn" style=" border-radius: 50px; background-color: #2F7580; color: white; border-color: #2F7580;">Criar Evento</button>
                     </form>
@@ -231,7 +232,14 @@
         }
         }
         
-        
+        function handleError(error, defaultMessage = 'Erro ao fazer a requisição ao servidor.') {
+    console.error(error);
+    Swal.fire({
+        title: "Erro!",
+        text: defaultMessage,
+        icon: "error"
+    });
+}
         /**
          * Função para preencher os cartões de eventos disponíveis na página.
          * @param {Array} events - Array de objetos representando os eventos.
@@ -460,10 +468,83 @@
         });
         
         
+        function formatDate(inputDate, format = 'DD/MM/YYYY HH:MI') {
+    const [date, time] = inputDate.split('T'); // Divide entre data e hora
+    const [year, month, day] = date.split('-'); // Divide a data no formato YYYY-MM-DD
+    if (time) {
+        const [hour, minute] = time.split(':'); // Divide o horário no formato HH:MM
+        return `${day}/${month}/${year} ${hour}:${minute}`;
+    }
+    return `${day}/${month}/${year}`; // Retorna apenas a data
+}
+
+
         
         
-        
-        
+async function addNewEvent(event) {
+    event.preventDefault(); 
+
+    try {
+       
+        const Titulo = document.getElementById('eventTitle').value.trim();
+        const Descricao = document.getElementById('eventDescription').value.trim();
+        const Categoria = document.getElementById('eventCategory').value.trim();
+        const ValorCota = parseFloat(document.getElementById('eventCota').value);
+        const DataHoraInicio = formatDate(document.getElementById('eventStartTime').value);
+        const DataHoraFim = formatDate(document.getElementById('eventEndTime').value);
+        const DataEvento = formatDate(document.getElementById('eventDate').value);
+
+
+       
+        if (!Titulo || !Descricao || !Categoria || isNaN(ValorCota) || !DataHoraInicio || !DataHoraFim || !DataEvento) {
+            Swal.fire({
+                title: "Erro!",
+                text: "Por favor, preencha todos os campos corretamente.",
+                icon: "error"
+            });
+            return;
+        }
+
+   
+        const response = await fetch('http://127.0.0.1:5000/addNewEvent', {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+                titulo: Titulo,
+                descricao: Descricao,
+                categoria: Categoria,
+                valor_cota: ValorCota,
+                data_hora_inicio: DataHoraInicio,
+                data_hora_fim: DataHoraFim,
+                data_evento: DataEvento
+            })
+        });
+
+      
+       console.log(response);
+
+        if (response.ok) {
+            Swal.fire({
+                title: "Sucesso!",
+                text: "Evento criado com sucesso.",
+                icon: "success"
+            });
+            closeModal(); 
+        } else {
+            const mensagem = await response.text();
+            Swal.fire({
+                title: "Erro!",
+                text: mensagem || "Não foi possível criar o evento.",
+                icon: "error"
+            });
+        }
+    } catch (error) {
+        handleError(error, 'Houve um erro inesperado ao tentar criar o evento.');
+}
+}
         
         
         

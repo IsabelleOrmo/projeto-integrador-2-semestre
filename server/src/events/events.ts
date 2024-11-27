@@ -523,7 +523,7 @@ export namespace EventsHandler {
     }
     
     export const addNewEventHandler: RequestHandler = async (req: Request, res: Response) => {
-        const token = req.get('token');
+        const token = req.cookies.token;
         const { titulo, descricao, categoria, valor_cota, data_hora_inicio, data_hora_fim, data_evento } = req.body;
         const verificaDataInicio = await verifyDate(data_hora_inicio);
         const verificaDataFim = await verifyDate(data_hora_fim);
