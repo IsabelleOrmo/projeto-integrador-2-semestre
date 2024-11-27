@@ -1,0 +1,172 @@
+/* Estilo Geral */
+body {
+    font-family: "Instrument Sans", Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #EFEFEF;
+    color: #000000;
+}
+
+/* Estilo do Formulário de Pesquisa */
+.form-pesquisa {
+    display: flex;
+    width: 70%;  
+    position: fixed;
+    margin-left: 5%;
+    background-color: #2F7580;
+    border-radius: 100%;
+}
+
+.form-pesquisa input {
+    background-color: #2F7580;
+    border: none;
+    width: 100%; 
+    padding: 0.5rem;
+    transition: none;
+}
+
+.form-pesquisa input:focus, 
+.form-pesquisa input:active {
+    background-color: #2F7580; 
+    border: none;
+    box-shadow: none; 
+    outline: none;
+}
+
+.form-pesquisa input:focus:active {
+    background-color: #2F7580;
+    border: none;
+}
+
+.form-pesquisa span {
+    background-color: #2F7580; 
+    border: none;
+}
+
+.form-pesquisa input:active {
+    background-color: #2F7580; 
+    border: none;
+}
+
+/* Ícones */
+.icons {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 20px; 
+}
+
+.icon-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.icon-container svg {
+    width: 30px;
+    height: auto;
+    fill: currentColor;
+}
+
+.icon-container div {
+    font-size: 12px;
+    margin-top: 5px; 
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .form-pesquisa {
+        width: 50%;
+        margin-left: 15%;
+    }
+
+    .icons {
+        gap: 10px;
+    }
+}
+
+/* Contêiner Principal */
+.container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 10px;
+}
+
+/* Título Principal */
+h1 {
+    color: #000000; /* Preto */
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+/* Lista de Eventos */
+.event-list {
+    list-style: none;
+    padding: 0;
+}
+
+.event-item {
+    background: linear-gradient(135deg, #ffffff, #f0f9ff);
+    border: none;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: none;
+}
+
+.event-item h2 {
+    font-size: 1.5rem;
+    color: #000000; /* Preto */
+    margin-bottom: 10px;
+}
+
+.event-item p {
+    margin: 5px 0;
+    color: #555555;
+}
+
+.event-item strong {
+    color: #000000;
+}
+
+/* Link para voltar */
+.back-link {
+    display: inline-block;
+    margin-top: 20px;
+    text-align: center;
+    font-size: 1rem;
+    color: #2F7580;
+    text-decoration: none;
+    border: 1px solid #2F7580;
+    padding: 10px 20px;
+    border-radius: 50px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.back-link:hover {
+    background-color: #2F7580;
+    color: #ffffff;
+}
+
+/* Botão Criar Evento */
+.btn-large {
+    padding: 10px 20px;
+    border-radius: 50px; /* Formato de pílula para consistência */
+    font-size: 14px;
+    background-color: #2F7580; /* Azul escuro */
+    color: #FFFFFF; /* Branco */
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.3s; /* Transição suave para o hover */
+}
+
+.btn-large:hover {
+    background-color: #A5D4FB; /* Azul claro ao passar o mouse */
+    color: #000000; /* Preto para contraste */
+    transform: scale(1.05); /* Leve aumento de tamanho no hover */
+}

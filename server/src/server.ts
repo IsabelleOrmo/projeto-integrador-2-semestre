@@ -102,6 +102,7 @@ routes.get('/getPix', WalletHandler.getPixHandler);
 routes.get('/getContaBancaria', WalletHandler.getContaBancariaHandler);
 routes.get('/logout', AccountsHandler.logoutHandler);
 app.get('/isLogged', AccountsHandler.IsLogged);
+routes.get('/userEvents', EventsHandler.getUserEventsHandler);
 
 app.use(routes);
 

@@ -698,6 +698,40 @@ export namespace EventsHandler {
         }
     }
 
+    async function getUserEvents(userId: string) {
+        OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
+    
+        const connection = await OracleDB.getConnection({
+            user: process.env.ORACLE_USER,
+            password: process.env.ORACLE_PASSWORD,
+            connectString: process.env.ORACLE_CONN_STR
+        });
+    
+        try {
+            const events = await connection.execute(
+                `SELECT  
+                    titulo, 
+                    descricao,  
+                    TO_CHAR(data_evento, 'YYYY-MM-DD') AS data_evento, 
+                    status_evento 
+                FROM 
+                    EVENTS 
+                WHERE 
+                    id_usuario = :userId
+                    status_evento IN ('APROVADO','PENDENTE')`,
+                { userId } // Parâmetro para evitar SQL injection
+            );
+    
+            return events.rows;
+        } catch (error) {
+            console.error('Erro ao buscar eventos do usuário:', error);
+            throw error;
+        } finally {
+            await connection.close();
+        }
+    }
+
+
     export const getFinishedEventsHandler: RequestHandler = async (req: Request, res: Response) =>{
         try {
             let events = await getFinishedEvents();
@@ -752,7 +786,29 @@ export namespace EventsHandler {
         } else {
             res.status(403).send('Acesso negado'); 
         }
-    }          
+    }         
+    
+    export const getUserEventsHandler: RequestHandler = async (req: Request, res: Response) => {
+        try {
+            const userId = req.params.userId; // Obtém o ID do usuário dos parâmetros da URL
+    
+            if (!userId) {
+                res.status(400).send('ID do usuário não fornecido.');
+                return; // Finaliza a execução da função
+            }
+    
+            const events = await getUserEvents(userId);
+    
+            if (Array.isArray(events) && events.length > 0) {
+                res.status(200).json(events);
+            } else {
+                res.status(404).send('Nenhum evento encontrado para este usuário.');
+            }
+        } catch (error) {
+            console.error('Erro ao buscar eventos do usuário:', error);
+            res.status(500).send('Erro ao buscar eventos do usuário.');
+        }
+    };
 
     export const searchEventHandler: RequestHandler = async (req: Request, res: Response) =>{
         const { keywords } = req.body;
