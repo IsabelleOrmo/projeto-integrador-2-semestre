@@ -254,24 +254,6 @@ export namespace AccountsHandler {
         }
     }
 
-    async function getHistory(id_usuario: number) {
-        OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
-
-        const connection = await OracleDB.getConnection({
-            user: process.env.ORACLE_USER,
-            password: process.env.ORACLE_PASSWORD,
-            connectString: process.env.ORACLE_CONN_STR
-        });
-
-        const result = await connection.execute(
-            `SELECT ID_TRANSACAO, ID_USUARIO, ID_EVENTO, VALOR, TIPO, TO_CHAR(DATA_TRANSACAO, 'YYYY-MM-DD HH24:MI:SS') AS DATA_TRASACAO FROM TRANSACAO WHERE ID_USUARIO = :id_usuario ORDER BY DATA_TRANSACAO DESC`,
-            [id_usuario]
-        );
-
-        await connection.close();
-
-        return result.rows;
-    }
 
     async function validateBirthDate(inputDate: string): Promise<boolean> {
         const currentDate = new Date();
@@ -289,6 +271,61 @@ export namespace AccountsHandler {
 
         return true;
     }
+
+    async function getHistoryQtty(id_usuario: number) : Promise<OracleDB.Result<unknown>> {
+
+        OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
+
+        // passo 1 - conectar-se ao oracle. 
+        let connection = await OracleDB.getConnection({
+            user: process.env.ORACLE_USER,
+            password: process.env.ORACLE_PASSWORD,
+            connectString: process.env.ORACLE_CONN_STR
+        });
+
+        let historyQtty = await connection.execute(
+            'SELECT count(ID_TRANSACAO) as historyQtty FROM TRANSACAO WHERE ID_USUARIO = :id_usuario',
+            [id_usuario]
+        );
+
+        await connection.close();
+
+        return historyQtty;
+    }
+        
+    async function getHistoryByPage(page: number, pageSize: number, id_usuario: number): Promise<OracleDB.Result<unknown>> {
+        const startRecord = (page - 1) * pageSize;
+    
+        OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
+    
+        // passo 1 - conectar-se ao oracle.
+        let connection = await OracleDB.getConnection({
+            user: process.env.ORACLE_USER,
+            password: process.env.ORACLE_PASSWORD,
+            connectString: process.env.ORACLE_CONN_STR
+        });
+    
+        try {
+            const query = `
+                SELECT ID_TRANSACAO, ID_USUARIO, ID_EVENTO, VALOR, TIPO, 
+                       TO_CHAR(DATA_TRANSACAO, 'YYYY-MM-DD HH24:MI:SS') AS DATA_TRANSACAO
+                FROM TRANSACAO 
+                WHERE ID_USUARIO = :id_usuario 
+                ORDER BY DATA_TRANSACAO DESC 
+                OFFSET ${startRecord} ROWS FETCH NEXT ${pageSize} ROWS ONLY
+            `;
+    
+            const result = await connection.execute(query, [id_usuario]);
+            return result;
+    
+        } catch (error) {
+            console.error('Erro ao buscar histórico paginado:', error);
+            throw error;
+        } finally {
+            await connection.close();
+        }
+    }
+    
 
     export const singUpHandler: RequestHandler = async (req: Request, res: Response) => {
         const { completeName, email, password, birthday } = req.body;
@@ -312,27 +349,6 @@ export namespace AccountsHandler {
                     console.error('Erro ao realizar cadastro:', error);
                     res.status(500).send('Erro ao realizar cadastro.');
                 }
-            }
-        } else {
-            res.status(400).send('Requisição inválida - Parâmetros faltando.');
-        }
-    };
-
-    export const getHistoryHandler: RequestHandler = async (req: Request, res: Response) => {
-        const token = req.cookies.token;
-        if (token) {
-            const id_usuario = await userId(token);
-            if (!id_usuario) {
-                res.status(400).send('Parâmetros faltando tente logar novamente.');
-                return;
-            }
-            const historico = await getHistory(id_usuario);
-            if (Array.isArray(historico) && historico.length > 0) {
-                res.status(200).json(historico);
-                return;
-            } else {
-                res.status(404).send("Histórico não encontrado");
-                return;
             }
         } else {
             res.status(400).send('Requisição inválida - Parâmetros faltando.');
@@ -369,4 +385,54 @@ export namespace AccountsHandler {
           res.status(400).send('Logue para acessar!');
         }
     }
+
+    export const getHistoryByPageHandler: RequestHandler = async (req: Request, res: Response) => {
+        const pPage = req.get('page');
+        const pPageSize = req.get('pageSize');
+        const token = req.cookies.token;
+    
+        if (!token) {
+            res.status(400).send('Requisição inválida - Token faltando.');
+            return;
+        }
+    
+        const id_usuario = await userId(token);
+        if (pPage && pPageSize && id_usuario) {
+            try {
+                const page = parseInt(pPage as string, 10);
+                const pageSize = parseInt(pPageSize as string, 10);
+    
+                if (isNaN(page) || isNaN(pageSize)) {
+                    res.status(400).send('Requisição inválida - Page ou PageSize inválidos.');
+                    return;
+                }
+    
+                const history = await getHistoryByPage(page, pageSize, id_usuario);
+                res.status(200).json(history.rows);
+            } catch (error) {
+                console.error('Erro ao buscar histórico paginado:', error);
+                res.status(500).send('Erro ao buscar histórico paginado.');
+            }
+        } else {
+            res.status(400).send('Requisição inválida - Parâmetros faltando.');
+        }
+    };
+    
+
+    export const getHistoryQttyHandler: RequestHandler = 
+    async (req: Request, res: Response) => {       
+        const token = req.cookies.token;
+        const id_usuario = await userId(token); 
+        if (!id_usuario) {
+            res.status(400).send('Parâmetros faltando. Tente logar novamente.');
+            return;
+        }
+        const htsrQtty = await getHistoryQtty(id_usuario);
+        res.statusCode = 200;
+        // enviando uma resposta JSON com a quantidade.
+        res.send(htsrQtty.rows);
+    }
+
 }
+
+    

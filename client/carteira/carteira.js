@@ -1,9 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Aguarda 500ms antes de chamar getHistory e getBalance para garantir que os cookies sejam carregados
-    
+    // Aguarda 500ms antes de chamar getBalance e requestNumberHistory para garantir que os cookies sejam carregados
     setTimeout(() => {
-        getHistory();
         getBalance();
+        requestNumberHistory(); // Solicita o número de itens para configurar o paginador
     }, 500);
 
     const formCartao = document.getElementById('formCartao');
@@ -22,7 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-
 // Função para tratar erros de requisições
 function handleError(error, defaultMessage = 'Erro ao fazer a requisição ao servidor.') {
     console.error(error);
@@ -31,30 +29,6 @@ function handleError(error, defaultMessage = 'Erro ao fazer a requisição ao se
         text: defaultMessage,
         icon: "error"
     });
-}
-
-// Função para buscar o histórico de transações
-async function getHistory() {
-    try {
-        const response = await fetch('http://127.0.0.1:5000/getHistory', {
-            method: 'GET',
-            headers: { "Content-Type": "application/json" },
-            credentials: 'include'
-        });
-
-        if (response.ok) {
-            const history = await response.json();
-            displayHistory(history);
-        } else if(response.status==404){
-            console.log("Nenhuma transação.")
-        }
-        else {
-            const errorMessage = await response.text();
-            handleError(errorMessage, 'Erro ao obter o histórico.');
-        }
-    } catch (error) {
-        handleError(error);
-    }
 }
 
 // Função para buscar o saldo
@@ -78,29 +52,127 @@ async function getBalance() {
     }
 }
 
-// Função para exibir o histórico na tabela
-function displayHistory(history) {
-    const tbody = document.querySelector('#historico');
-    tbody.innerHTML = ''; // Limpa o conteúdo da tabela
-
-    history.forEach(item => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>R$${item.VALOR.toFixed(2)}</td>
-            <td>${item.TIPO}</td>
-            <td>${item.DATA_TRASACAO}</td>
-        `;
-        tbody.appendChild(tr);
-    });
-}
-
 // Função para exibir o saldo
 function displayBalance(balanceData) {
     const balanceElement = document.getElementById('balance');
     balanceElement.innerText = `R$${balanceData.VALOR.toFixed(2)}`;
 }
 
-// Função para adicionar saldo
+// Variáveis do Paginador
+var ulPaginator = document.getElementById("ulPaginator");
+let numPages = 0;
+const pageSize = 5;
+var page = 1;
+
+/**
+ * Request para obter a quantidade de transações do histórico,
+ * necessário para construir o paginador.
+ */
+async function requestNumberHistory() {
+    try {
+        const resQtty = await fetch("http://127.0.0.1:5000/getHistoryQtty", {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+            credentials: 'include'
+        });
+
+        if (resQtty.ok) {
+            const qttyJson = await resQtty.json();
+            const qtty = qttyJson[0].HISTORYQTTY;
+            console.log(`Quantidade de transações: ${qtty}`);
+            numPages = Math.ceil(qtty / pageSize);
+            refreshPaginator();
+            requestHistory(1); // Carrega a primeira página do histórico
+        } else {
+            alert('Erro ao obter a quantidade de registros. Verifique e tente novamente.');
+        }
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+// Função para resetar a lista de páginas do paginador
+function resetUlPageNumbers() {
+    while (ulPaginator.firstChild) {
+        ulPaginator.removeChild(ulPaginator.firstChild);
+    }
+}
+
+/**
+ * Prepara o paginador para o número de páginas calculado
+ */
+function refreshPaginator() {
+    resetUlPageNumbers();
+    for (let i = 1; i <= numPages; i++) {
+        const status = (i === page) ? "page-item active" : "page-item";
+        const strLi = `<li class="${status}"><a class="page-link" href="javascript:void(0);" onclick="requestHistory(${i});">${i}</a></li>`;
+        ulPaginator.innerHTML += strLi;
+    }
+}
+
+/**
+ * Requisição para obter os registros do histórico por página
+ */
+async function requestHistory(pageNumber) {
+    try {
+        page = pageNumber;
+
+        const reqHeaders = new Headers();
+        reqHeaders.append("Content-Type", "application/json");
+        reqHeaders.append("page", pageNumber);
+        reqHeaders.append("pageSize", pageSize);
+
+        const resHistory = await fetch("http://127.0.0.1:5000/getHistoryByPage", {
+            method: "POST",
+            headers: reqHeaders,
+            credentials: 'include'
+        });
+
+        if (resHistory.ok) {
+            refreshPaginator();
+            const historyData = await resHistory.json();
+            fillTableWithHistory(historyData);
+        } else {
+            alert('Erro ao obter histórico. Verifique e tente novamente.');
+        }
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+/**
+ * Preenche a tabela com os registros do histórico
+ */
+function fillTableWithHistory(history) {
+    cleanTableRows();
+    history.forEach(element => {
+        addHistoryRow(element);
+    });
+}
+
+/**
+ * Limpa as linhas da tabela de histórico
+ */
+function cleanTableRows() {
+    const tbody = document.querySelector('#historico');
+    tbody.innerHTML = '';
+}
+
+/**
+ * Adiciona uma linha na tabela de histórico para cada registro
+ */
+function addHistoryRow(item) {
+    const tbody = document.querySelector('#historico');
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+        <td>R$${item.VALOR.toFixed(2)}</td>
+        <td>${item.TIPO}</td>
+        <td>${item.DATA_TRANSACAO}</td>
+    `;
+    tbody.appendChild(tr);
+}
+
+// Função para adicionar saldo (exemplo de função adicional)
 async function addFunds(event) {
     event.preventDefault();
 
@@ -128,7 +200,7 @@ async function addFunds(event) {
                     icon: "success"
                 });
                 getBalance();
-                getHistory();
+                requestHistory(page); // Atualiza o histórico para mostrar o saldo atualizado
                 document.getElementById('recarga').value = '1'; // Limpa o formulário
             } else {
                 const errorMessage = await addFundsResponse.text();
@@ -149,6 +221,128 @@ async function addFunds(event) {
     }
 }
 
+// Função para adicionar cartão de crédito
+async function addCreditCard(event) {
+    event.preventDefault();
+
+    try {
+        const data = {
+            numero_cartao: document.getElementById('numero_cartao').value,
+            nome_cartao: document.getElementById('nome_cartao').value,
+            data_validade: document.getElementById('data_validade').value,
+            cvv: document.getElementById('cvv').value
+        };
+
+        const response = await fetch('http://127.0.0.1:5000/addDadosBancarios', {
+            method: 'POST',
+            headers: { "Content-Type": "application/json" },
+            credentials: 'include',
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            Swal.fire({
+                title: "Cartão cadastrado!",
+                text: "Cartão de crédito cadastrado com sucesso",
+                icon: "success"
+            });
+            closeModal();
+        } else if (response.status == 400) {
+            Swal.fire({
+                title: "Cartão já cadastrado!",
+                text: "Você já tem um cartão de crédito cadastrado.",
+                icon: "error"
+            });
+        } else {
+            const errorMessage = await response.text();
+            handleError(errorMessage, 'Erro ao cadastrar o cartão.');
+        }
+    } catch (error) {
+        handleError(error);
+    }
+}
+
+// Função para adicionar uma chave Pix
+async function addPix(event) {
+    event.preventDefault();
+
+    try {
+        const pix = document.getElementById('chave_pix').value;
+
+        const response = await fetch('http://127.0.0.1:5000/addDadosBancarios', {
+            method: 'POST',
+            headers: { "Content-Type": "application/json" },
+            credentials: 'include',
+            body: JSON.stringify({ chave_pix: pix })
+        });
+
+        if (response.ok) {
+            Swal.fire({
+                title: "Chave Pix cadastrada!",
+                text: "Chave Pix cadastrada com sucesso",
+                icon: "success"
+            });
+            closeModal();
+        } else {
+            Swal.fire({
+                title: "Chave Pix já cadastrada!",
+                text: "Você já tem uma chave Pix cadastrada.",
+                icon: "error"
+            });
+        }
+    } catch (error) {
+        handleError(error);
+    }
+}
+
+// Função para adicionar uma conta bancária
+async function addContaBancaria(event) {
+    event.preventDefault();
+
+    const data = {
+        banco: document.getElementById('banco').value,
+        agencia: document.getElementById('agencia').value,
+        numero_conta: document.getElementById('numero_conta').value,
+        tipo_conta: document.getElementById('tipo_conta').value,
+        nome_titular: document.getElementById('nome_titular').value
+    };
+
+    try {
+        const response = await fetch('http://127.0.0.1:5000/addDadosBancarios', {
+            method: 'POST',
+            headers: { "Content-Type": "application/json" },
+            credentials: 'include',
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            Swal.fire({
+                title: "Conta bancária cadastrada!",
+                text: "Conta bancária cadastrada com sucesso",
+                icon: "success"
+            });
+            closeModal();
+        } else {
+            Swal.fire({
+                title: "Conta bancária já cadastrada!",
+                text: "Você já tem uma conta bancária cadastrada.",
+                icon: "error"
+            });
+        }
+    } catch (error) {
+        handleError(error);
+    }
+}
+
+// Função para fechar o modal de cadastro
+function closeModal() {
+    const modalElement = document.getElementById('cadastroModal');
+    const modalInstance = bootstrap.Modal.getInstance(modalElement);
+    if (modalInstance) {
+        modalInstance.hide();
+    }
+}
+
 // Função para saque
 async function withdrawFunds(event) {
     event.preventDefault();
@@ -156,33 +350,33 @@ async function withdrawFunds(event) {
     try {
         const valor = parseFloat(document.getElementById('saqueValor').value);
 
-            const addFundsResponse = await fetch('http://127.0.0.1:5000/withdrawFunds', {
-                method: 'PATCH',
-                headers: { "Content-Type": "application/json" },
-                credentials: 'include',
-                body: JSON.stringify({ valor })
-            });
+        const addFundsResponse = await fetch('http://127.0.0.1:5000/withdrawFunds', {
+            method: 'PATCH',
+            headers: { "Content-Type": "application/json" },
+            credentials: 'include',
+            body: JSON.stringify({ valor })
+        });
 
         if (addFundsResponse.ok) {
-                Swal.fire({
-                    title: "Valor sacado!",
-                    text: "Saque realizado com sucesso",
-                    icon: "success"
-                });
-                getBalance();
-                getHistory();
-                document.getElementById('saqueValor').value = '1'; // Limpa o formulário
-            } else {
-                const errorMessage = await addFundsResponse.text();
-                Swal.fire({
-                    title: "Erro!",
-                    text: errorMessage,
-                    icon: "error"
-                });
-            }
-        } catch (error) {
-             handleError(error);
+            Swal.fire({
+                title: "Valor sacado!",
+                text: "Saque realizado com sucesso",
+                icon: "success"
+            });
+            getBalance();
+            requestHistory(page); // Atualiza o histórico
+            document.getElementById('saqueValor').value = '1'; // Limpa o formulário
+        } else {
+            const errorMessage = await addFundsResponse.text();
+            Swal.fire({
+                title: "Erro!",
+                text: errorMessage,
+                icon: "error"
+            });
         }
+    } catch (error) {
+        handleError(error);
+    }
 }
 
 //Funcao para verificar metodo de saque
@@ -245,137 +439,6 @@ async function verificaSaque(event) {
         } catch (error) {
             handleError(error);
         }
-    }
-}
-
-
-// Função para adicionar um cartão de crédito
-async function addCreditCard(event) {
-    event.preventDefault();
-
-    try {
-        const data = {
-            numero_cartao: document.getElementById('numero_cartao').value,
-            nome_cartao: document.getElementById('nome_cartao').value,
-            data_validade: document.getElementById('data_validade').value,
-            cvv: document.getElementById('cvv').value
-        };
-
-        const response = await fetch('http://127.0.0.1:5000/addDadosBancarios', {
-            method: 'POST',
-            headers: { "Content-Type": "application/json" },
-            credentials: 'include',
-            body: JSON.stringify(data)
-        });
-
-        if (response.ok) {
-            Swal.fire({
-                title: "Cartão cadastrado!",
-                text: "Cartão de crédito cadastrado com sucesso",
-                icon: "success"
-            });
-            closeModal();
-        } else if (response.status == 400) {
-            Swal.fire({
-                title: "Cartão já cadastrado!",
-                text: "Você já tem um cartão de crédito já cadastrado.",
-                icon: "error"
-            });
-        }
-        else {
-            const errorMessage = await response.text();
-            handleError(errorMessage, 'Erro ao cadastrar o cartão.');
-        }
-    } catch (error) {
-        handleError(error);
-    }
-}
-
-// Função para adicionar um a chave-pix
-async function addPix(event) {
-    event.preventDefault();
-
-    try {
-        const pix = document.getElementById('chave_pix').value;
-
-        const response = await fetch('http://127.0.0.1:5000/addDadosBancarios', {
-            method: 'POST',
-            headers: { "Content-Type": "application/json" },
-            credentials: 'include',
-            body: JSON.stringify({
-                chave_pix: pix
-            })
-        });
-
-        console.log(response);
-
-        if (response.ok) {
-            Swal.fire({
-                title: "Chave-pix cadastrada!",
-                text: "Chave-pix cadastrado com sucesso",
-                icon: "success"
-            });
-            closeModal();
-        } else {
-            Swal.fire({
-                title: "Chave-pix já cadastrada!",
-                text: "Você já tem uma chave-pix cadastrada.",
-                icon: "error"
-            });
-        }
-    } catch (error) {
-        handleError(error);
-    }
-}
-
-// Função para adicionar uma conta bancária
-async function addContaBancaria(event) {
-    event.preventDefault();
-
-    const data = {
-        banco: document.getElementById('banco').value,
-        agencia: document.getElementById('agencia').value,
-        numero_conta: document.getElementById('numero_conta').value,
-        tipo_conta: document.getElementById('tipo_conta').value,
-        nome_titular: document.getElementById('nome_titular').value
-    };
-
-    console.log(document.getElementById('tipo_conta').value);
-    try {
-        const response = await fetch('http://127.0.0.1:5000/addDadosBancarios', {
-            method: 'POST',
-            headers: { "Content-Type": "application/json" },
-            credentials: 'include',
-            body: JSON.stringify(data)
-        });
-
-        console.log(response);
-
-        if (response.ok) {
-            Swal.fire({
-                title: "Conta bancária cadastrada!",
-                text: "Conta bancária cadastrada com sucesso",
-                icon: "success"
-            });
-            closeModal();
-        } else {
-            Swal.fire({
-                title: "Conta bancária já cadastrado!",
-                text: "Você já tem uma conta bancária cadastrada.",
-                icon: "error"
-            });
-        }
-    } catch (error) {
-        handleError(error);
-    }
-}
-
-// Função para fechar o modal de cadastro
-function closeModal() {
-    const modalElement = document.getElementById('cadastroModal');
-    const modalInstance = bootstrap.Modal.getInstance(modalElement);
-    if (modalInstance) {
-        modalInstance.hide();
     }
 }
 

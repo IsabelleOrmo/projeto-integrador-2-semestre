@@ -29,7 +29,7 @@ export namespace BetHandler {
     }
     
 
-    async function userId(email: string): Promise<number | null> {
+    async function userId(token: string): Promise<number | null> {
         OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
 
         const connection = await OracleDB.getConnection({
@@ -40,8 +40,8 @@ export namespace BetHandler {
 
         try {
             const result = await connection.execute(
-                `SELECT ID FROM ACCOUNTS WHERE EMAIL = :email`,
-                [email]
+                `SELECT ID FROM ACCOUNTS WHERE TOKEN = :token`,
+                [token]
             );
 
             const rows = result.rows as Account[];
@@ -245,12 +245,12 @@ export namespace BetHandler {
     
 
     export const betOnEventHandler: RequestHandler = async (req: Request, res: Response) => {
-        const email = req.get('email');
+        const token = req.cookies.token;
         const id_evento = req.get('id_evento');
         const { cotas_qntd, tipo } = req.body;
         var tipoUpper = tipo.toUpperCase( );
         
-        if (typeof email !== 'string') {
+        if (typeof token !== 'string') {
             res.status(400).send('Requisição inválida - tente logar novamente.');
             return; 
         }
@@ -285,7 +285,7 @@ export namespace BetHandler {
             } 
 
             try {
-                const id_usuario = await userId(email);
+                const id_usuario = await userId(token);
         
                 if (id_usuario === null) {
                     res.status(401).send('Acesso não permitido. Tente logar novamente.');
@@ -326,8 +326,7 @@ export namespace BetHandler {
             }
         } else {
             res.status(404).send("Evento não encontrado");
-        }
-        
+        }     
 }
 
 }
