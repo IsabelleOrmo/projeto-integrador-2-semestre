@@ -1,17 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR"> <!-- Alterado para pt-BR para consistência -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Font Awesome -->
     <link href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" rel="stylesheet" crossorigin="anonymous">
+    <!-- Seu CSS Personalizado -->
     <link rel="stylesheet" href="home.css">
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Mingzat&display=swap" rel="stylesheet">
+    <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="../imagens/favicon.ico">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 <body>
     <nav class="navbar navbar-expand-lg" style="background-color: #A5D4FB; padding: 0;">
@@ -36,13 +42,13 @@
                 <!-- Carteira -->
                 <div class="icon-container text-center me-3">
                     <a href="../carteira/carteira.html" style="text-decoration: none; color: black;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="auto" fill="currentColor" class="bi bi-cash-coin" style="position: relative; top: 4px;" viewBox="0 0 16 16">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="30" fill="currentColor" class="bi bi-cash-coin" style="position: relative; top: 4px;" viewBox="0 0 16 16">
                             <!-- SVG Paths -->
                             <path fill-rule="evenodd" d="M11 15a4 4 0 1 0 0-8 4 4 0 0 0 0 8m5-4a5 5 0 1 1-10 0 5 5 0 0 1 10 0"/>
                             <path d="M9.438 11.944c.047.596.518 1.06 1.363 1.116v.44h.375v-.443c.875-.061 1.386-.529 1.386-1.207 0-.618-.39-.936-1.09-1.1l-.296-.07v-1.2c.376.043.614.248.671.532h.658c-.047-.575-.54-1.024-1.329-1.073V8.5h-.375v.45c-.747.073-1.255.522-1.255 1.158 0 .562.378.92 1.007 1.066l.248.061v1.272c-.384-.058-.639-.27-.696-.563h-.668zm1.36-1.354c-.369-.085-.569-.26-.569-.522 0-.294.216-.514.572-.578v1.1zm.432.746c.449.104.655.272.655.569 0 .339-.257.571-.709.614v-1.195z"/>
                             <path d="M1 0a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h4.083q.088-.517.258-1H3a2 2 0 0 0-2-2V3a2 2 0 0 0 2-2h10a2 2 0 0 0 2 2v3.528c.38.34.717.728 1 1.154V1a1 1 0 0 0-1-1z"/>
                             <path d="M9.998 5.083 10 5a2 2 0 1 0-3.132 1.65 6 6 0 0 1 3.13-1.567"/>
-                        </svg>
+                        </svg>                        
                         <div>Carteira</div>
                     </a>
                 </div>
@@ -50,21 +56,22 @@
                 <!-- Log-out -->
                 <div class="icon-container text-center">
                     <a href="#" style="text-decoration: none; color: black;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="auto" fill="currentColor" class="bi bi-box-arrow-left" viewBox="0 0 16 16">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-box-arrow-left" viewBox="0 0 16 16">
                             <path fill-rule="evenodd" d="M6 12.5a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v2a.5.5 0 0 1-1 0v-2A1.5 1.5 0 0 1 6.5 2h8A1.5 1.5 0 0 1 16 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-8A1.5 1.5 0 0 1 5 12.5v-2a.5.5 0 0 1 1 0z"/>
                             <path fill-rule="evenodd" d="M.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L1.707 7.5H10.5a.5.5 0 0 1 0 1H1.707l2.147 2.146a.5.5 0 0 1-.708.708z"/>
                         </svg>
+                        
                         <div>Log-out</div>
                     </a>
                 </div>
             </div>
         </div>
     </nav>
-    
 
+      <!-- Botão para abrir o modal -->
     <div class="row">
         <div class="col-2 offset-0">
-            <button type="button" class="btn btn-success btn-large" style="margin-left: 20px; margin-top: 15px;" data-bs-toggle="modal" data-bs-target="#createEventModal">
+            <button type="button" class="btn btn-success btn-large" style="margin-left: 20px; margin-top: 15px;" data-bs-toggle="modal" data-bs-target="#addEventModal">
                 Criar Evento
             </button>
         </div>
@@ -74,84 +81,57 @@
     </div>
     
     
-    <div class="container">
-            <!-- Eventos disponíveis -->
-            <div class="event-section   ">
-                <h2>Eventos Disponíveis</h2>
-                <div class="events" id="events"></div>
-            </div>
-        
-            <!-- Eventos mais apostados -->
-            <div class="event-section mt-2">
-                <br>
-                <h2>Eventos Mais Apostados</h2>
-                <div class="events" id="eventos-apostados"></div>
-            </div>
-        
-        <!-- Eventos por categoria -->
-        <div class="event-section mt-2">
-            <br>
-            <h2>Eventos por Categoria</h2>
-            <div class="category-dropdown">
-                <select id="categoryFilter" class="form-select">
-                    <option value="all">Todas as Categorias</option>
-                    <!-- As opções serão preenchidas dinamicamente via JavaScript -->
-                </select>
-            </div>
-            <br>
-            <div class="events" id="eventsByCategory">
-                <!-- Eventos filtrados por categoria serão exibidos aqui -->
-            </div>
-        </div>
-    </div>
     
-    
-        <!-- Modal para Criar Evento -->
-    <div class="modal fade" id="createEventModal" tabindex="-1" aria-labelledby="createEventModalLabel" aria-hidden="true">
-        <div class="modal-dialog" style="margin-top: 100px;"> <!-- Ajuste o valor conforme necessário -->
+     <!-- Modal para adicionar um novo evento -->
+     <div class="modal fade" id="addEventModal" tabindex="-1" aria-labelledby="addEventModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="createEventModalLabel">Criar Novo Evento</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="createEventForm" onsubmit="addNewEvent(event)">
+                <form id="eventForm">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addEventModalLabel">Adicionar Novo Evento</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Campos do formulário -->
                         <div class="mb-3">
                             <label for="eventTitle" class="form-label">Título do Evento</label>
-                            <input type="text" class="form-control" id="eventTitle" placeholder="Digite o título" required>
+                            <input type="text" class="form-control" id="eventTitle" required>
                         </div>
                         <div class="mb-3">
                             <label for="eventDescription" class="form-label">Descrição</label>
-                            <textarea class="form-control" id="eventDescription" rows="3" placeholder="Digite a descrição" required></textarea>
+                            <textarea class="form-control" id="eventDescription" rows="3" required></textarea>
                         </div>
                         <div class="mb-3">
                             <label for="eventCategory" class="form-label">Categoria</label>
-                            <input type="text" class="form-control" id="eventCategory" placeholder="Digite a categoria" required>
-                        </div>                        
+                            <input type="text" class="form-control" id="eventCategory" required>
+                        </div>
                         <div class="mb-3">
                             <label for="eventCota" class="form-label">Valor da Cota</label>
-                            <input type="number" class="form-control" id="eventCota" placeholder="Digite o valor da cota" required>
+                            <input type="number" class="form-control" id="eventCota" step="0.01" required>
                         </div>
                         <div class="mb-3">
                             <label for="eventStartTime" class="form-label">Data e Hora de Início</label>
-                            <input type="text" class="form-control" id="eventStartTime" required>
+                            <input type="datetime-local" class="form-control" id="eventStartTime" required>
                         </div>
                         <div class="mb-3">
                             <label for="eventEndTime" class="form-label">Data e Hora de Encerramento</label>
-                            <input type="text" class="form-control" id="eventEndTime" required>
+                            <input type="datetime-local" class="form-control" id="eventEndTime" required>
                         </div>
                         <div class="mb-3">
                             <label for="eventDate" class="form-label">Data do Evento</label>
-                            <input type="text" class="form-control" id="eventDate" required>
+                            <input type="date" class="form-control" id="eventDate" required>
                         </div>
-                        <button type="submit" class="btn" style=" border-radius: 50px; background-color: #2F7580; color: white; border-color: #2F7580;">Criar Evento</button>
-                    </form>
-                </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" style="border-radius: 50px; border: none;" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" style="background-color: #2F7580; border-radius: 50px; border: none;" class="btn btn-primary">Adicionar Evento</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 
-        <!-- Modal para Apostar em Evento -->
+    <!-- Modal para Apostar em Evento -->
     <div class="modal fade" id="betEventModal" tabindex="-1" aria-labelledby="betEventModalLabel" aria-hidden="true">
         <div class="modal-dialog" style="margin-top: 100px;">
             <div class="modal-content">
@@ -183,63 +163,263 @@
             </div>
         </div>
     </div>
+
+    <!-- Conteúdo da Página -->
+    <div class="container">
+        <!-- Eventos disponíveis -->
+        <div class="event-section">
+            <h2>Eventos Disponíveis</h2>
+            <div class="events" id="events"></div>
+        </div>
     
+        <!-- Eventos mais apostados -->
+        <div class="event-section mt-2">
+            <br>
+            <h2>Eventos Mais Apostados</h2>
+            <div class="events" id="eventos-apostados"></div>
+        </div>
+    
+        <!-- Eventos por categoria -->
+        <div class="event-section mt-2">
+            <br>
+            <h2>Eventos por Categoria</h2>
+            <div class="category-dropdown">
+                <select id="categoryFilter" class="form-select">
+                    <option value="all">Todas as Categorias</option>
+                    <!-- As opções serão preenchidas dinamicamente via JavaScript -->
+                </select>
+            </div>
+            <br>
+            <div class="events" id="eventsByCategory">
+                <!-- Eventos filtrados por categoria serão exibidos aqui -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS (inclui Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-..." crossorigin="anonymous"></script>
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Script JavaScript Personalizado -->
     <script>
+        // Função para tratar erros de requisições
+        function handleError(error, defaultMessage = 'Erro ao fazer a requisição ao servidor.') {
+            console.error('Erro capturado:', error);
+            Swal.fire({
+                title: "Erro!",
+                text: defaultMessage,
+                icon: "error"
+            });
+        }
+
+        // Função para formatar data e hora
+        function formatDateTime(raw) {
+            const date = new Date(raw);
+            const yyyy = date.getFullYear();
+            const mm = String(date.getMonth() + 1).padStart(2, '0');
+            const dd = String(date.getDate()).padStart(2, '0');
+            const hh = String(date.getHours()).padStart(2, '0');
+            const mi = String(date.getMinutes()).padStart(2, '0');
+            const ss = String(date.getSeconds()).padStart(2, '0');
+            return `${yyyy}-${mm}-${dd} ${hh}:${mi}:${ss}`;
+        }
+
+        // Função para formatar apenas a data
+        function formatDate(raw) {
+            const date = new Date(raw);
+            const yyyy = date.getFullYear();
+            const mm = String(date.getMonth() + 1).padStart(2, '0');
+            const dd = String(date.getDate()).padStart(2, '0');
+            return `${yyyy}-${mm}-${dd}`;
+        }
+
+        // Função para fechar o modal
+        function closeModal() {
+            console.log('Fechando o modal...');
+            const modalElement = document.getElementById('addEventModal');
+            if (!modalElement) {
+                console.error('Elemento do modal não encontrado.');
+                return;
+            }
+            const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+            if (!modal) {
+                console.error('Instância do modal não foi criada.');
+                return;
+            }
+            modal.hide();
+        }
+
+        // Função para adicionar um novo evento
+        async function addNewEvent(event) {
+            event.preventDefault(); // Evita que o formulário recarregue a página
+            console.log('Submetendo o formulário...');
+
+            try {
+                // Coleta os valores dos campos do formulário
+                const Titulo = document.getElementById('eventTitle').value.trim();
+                const Descricao = document.getElementById('eventDescription').value.trim();
+                const Categoria = document.getElementById('eventCategory').value.trim();
+                const ValorCota = parseFloat(document.getElementById('eventCota').value);
+
+                // Captura os valores de data e hora
+                const rawDataHoraInicio = document.getElementById('eventStartTime').value; // formato ISO
+                const rawDataHoraFim = document.getElementById('eventEndTime').value; // formato ISO
+                const rawDataEvento = document.getElementById('eventDate').value; // formato ISO
+
+                // Converte os valores para os formatos esperados pelo backend
+                const DataHoraInicio = formatDateTime(rawDataHoraInicio); // YYYY-MM-DD HH:MM:SS
+                const DataHoraFim = formatDateTime(rawDataHoraFim); // YYYY-MM-DD HH:MM:SS
+                const DataEvento = formatDate(rawDataEvento); // YYYY-MM-DD
+
+                // Log para depuração
+                console.log('Dados do Formulário:', {
+                    titulo: Titulo,
+                    descricao: Descricao,
+                    categoria: Categoria,
+                    valor_cota: ValorCota,
+                    data_hora_inicio: DataHoraInicio,
+                    data_hora_fim: DataHoraFim,
+                    data_evento: DataEvento
+                });
+
+                // Validação básica no frontend
+                if (!Titulo || !Descricao || !Categoria || isNaN(ValorCota) || !DataHoraInicio || !DataHoraFim || !DataEvento) {
+                    Swal.fire({
+                        title: "Erro!",
+                        text: "Por favor, preencha todos os campos corretamente.",
+                        icon: "error"
+                    });
+                    return;
+                }
+
+                            // Validação de Datas
+                            const startDateTime = new Date(rawDataHoraInicio);
+            const endDateTime = new Date(rawDataHoraFim);
+            const eventDate = new Date(rawDataEvento);
+
+            if (eventDate < startDateTime) {
+                Swal.fire({
+                    title: "Erro!",
+                    text: "A data do evento não pode ser anterior à data e hora de início.",
+                    icon: "error"
+                });
+                return;
+            }
+
+            if (startDateTime > endDateTime) {
+                Swal.fire({
+                    title: "Erro!",
+                    text: "A data e hora de início não podem ser posteriores à data e hora de encerramento.",
+                    icon: "error"
+                });
+                return;
+            }
+
+            if (eventDate < endDateTime) {
+                Swal.fire({
+                    title: "Erro!",
+                    text: "A data do evento deve ser posterior à data e hora de encerramento das apostas.",
+                    icon: "error"
+                });
+                return;
+            }
+
+                // Envio da requisição para o backend
+                const response = await fetch('http://127.0.0.1:5000/addNewEvent', {
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        titulo: Titulo,
+                        descricao: Descricao,
+                        categoria: Categoria,
+                        valor_cota: ValorCota,
+                        data_hora_inicio: DataHoraInicio,
+                        data_hora_fim: DataHoraFim,
+                        data_evento: DataEvento
+                    })
+                });
+
+                // Verifica a resposta do servidor
+                console.log('Resposta do servidor:', response);
+
+                if (response.ok) {
+                    // Exibe o SweetAlert e depois fecha o modal
+                    Swal.fire({
+                        title: "Sucesso!",
+                        text: "Evento criado com sucesso.",
+                        icon: "success"
+                    }).then(() => {
+                        closeModal(); // Fecha o modal após o usuário fechar o SweetAlert
+                        // Opcional: Limpar o formulário após o sucesso
+                        document.getElementById('eventForm').reset();
+                    });
+                } else {
+                    const mensagem = await response.text();
+                    Swal.fire({
+                        title: "Erro!",
+                        text: mensagem || "Não foi possível criar o evento.",
+                        icon: "error"
+                    });
+                }
+            } catch (error) {
+                handleError(error, 'Houve um erro inesperado ao tentar criar o evento.');
+            }
+        }
+
+        // Adicionar o event listener após a definição das funções
+        document.getElementById('eventForm').addEventListener('submit', addNewEvent);
+
         // Seleciona o contêiner onde os eventos disponíveis serão exibidos
         var eventsContainer = document.getElementById('events');
-        
+
         // Seleciona o contêiner onde os eventos mais apostados serão exibidos
         var eventsContainerMaisApostados = document.getElementById('eventos-apostados');
-        
+
         // Array para armazenar todos os eventos disponíveis
         let allEvents = [];
-        
+
         // ================================
         // Funções para Eventos Disponíveis
         // ================================
-        
+
         /**
          * Função assíncrona para buscar eventos disponíveis do backend.
          * Faz uma requisição GET para o endpoint /availableEvents.
          */
         async function requestAvailableEvents() {
-        try {
-            const resEvent = await fetch("http://localhost:5000/availableEvents", {
-                method: "GET"
-            });
-        
-            if (resEvent.ok) {
-            let eventsData = await resEvent.json();
-        
-            // Remove duplicados com base no ID_EVENTO
-            eventsData = eventsData.filter((event, index, self) =>
-                index === self.findIndex(e => e.ID_EVENTO === event.ID_EVENTO)
-            );
-        
-            // Armazena os eventos únicos em allEvents
-            allEvents = eventsData;
-            
-                // Preenche os cartões de eventos disponíveis
-                fillAvailableEventCards(allEvents);
-        
-                // Preenche o dropdown de categorias
-                populateCategoryDropdown(allEvents);
-            } else {
-                alert("Nenhum evento encontrado.");
+            try {
+                const resEvent = await fetch("http://localhost:5000/availableEvents", {
+                    method: "GET"
+                });
+
+                if (resEvent.ok) {
+                    let eventsData = await resEvent.json();
+
+                    // Remove duplicados com base no ID_EVENTO
+                    eventsData = eventsData.filter((event, index, self) =>
+                        index === self.findIndex(e => e.ID_EVENTO === event.ID_EVENTO)
+                    );
+
+                    // Armazena os eventos únicos em allEvents
+                    allEvents = eventsData;
+                    
+                    // Preenche os cartões de eventos disponíveis
+                    fillAvailableEventCards(allEvents);
+
+                    // Preenche o dropdown de categorias
+                    populateCategoryDropdown(allEvents);
+                } else {
+                    alert("Nenhum evento encontrado.");
+                }
+            } catch (error) {
+                console.error("Erro ao buscar eventos disponíveis:", error);
             }
-        } catch (error) {
-            console.error("Erro ao buscar eventos disponíveis:", error);
         }
-        }
-        
-        function handleError(error, defaultMessage = 'Erro ao fazer a requisição ao servidor.') {
-    console.error(error);
-    Swal.fire({
-        title: "Erro!",
-        text: defaultMessage,
-        icon: "error"
-    });
-}
+
         /**
          * Função para preencher os cartões de eventos disponíveis na página.
          * @param {Array} events - Array de objetos representando os eventos.
@@ -247,12 +427,12 @@
         function fillAvailableEventCards(events) {
             // Limpa o conteúdo atual do contêiner de eventos disponíveis
             eventsContainer.innerHTML = '';
-        
+
             // Itera sobre cada evento recebido
             events.forEach(event => {
                 // Formata o valor da cota para ter 2 casas decimais
                 const valorCotaFormatado = parseFloat(event.VALOR_COTA).toFixed(2);
-        
+
                 // Cria o HTML do cartão do evento utilizando template literals
                 const eventCard = 
                     `<div class="event-card">
@@ -265,16 +445,16 @@
                             Apostar
                         </button>
                     </div>`;
-        
+
                 // Insere o cartão do evento no contêiner de eventos disponíveis
                 eventsContainer.insertAdjacentHTML('beforeend', eventCard);
             });
         }
-        
+
         // ==================================
         // Funções para Eventos Mais Apostados
         // ==================================
-        
+
         /**
          * Função assíncrona para buscar os eventos mais apostados do backend.
          * Faz uma requisição GET para o endpoint /eventosMaisApostados.
@@ -285,7 +465,7 @@
                 const resEvent = await fetch("http://localhost:5000/eventosMaisApostados", {
                     method: "GET"
                 });
-        
+
                 // Verifica se a resposta foi bem-sucedida
                 if (resEvent.ok) {
                     // Converte a resposta para JSON
@@ -302,7 +482,7 @@
                 console.error("Erro ao buscar eventos mais apostados:", error);
             }
         }
-        
+
         /**
          * Função para preencher os cartões de eventos mais apostados na página.
          * @param {Array} events - Array de objetos representando os eventos mais apostados.
@@ -310,12 +490,12 @@
         function fillMostBetEventCards(events) {
             // Limpa o conteúdo atual do contêiner de eventos mais apostados
             eventsContainerMaisApostados.innerHTML = '';
-        
+
             // Itera sobre cada evento recebido
             events.forEach(event => {
                 // Formata o valor da cota para ter 2 casas decimais
                 const valorCotaFormatado = parseFloat(event.VALOR_COTA).toFixed(2);
-        
+
                 // Cria o HTML do cartão do evento utilizando template literals
                 const eventCard = 
                     `<div class="event-card">
@@ -328,16 +508,16 @@
                             Apostar
                         </button>
                     </div>`;
-        
+
                 // Insere o cartão do evento no contêiner de eventos mais apostados
                 eventsContainerMaisApostados.insertAdjacentHTML('beforeend', eventCard);
             });
         }
-        
+
         // ==================================
         // Funções para Manipulação do Modal
         // ==================================
-        
+
         /**
          * Função para abrir o modal de aposta e preencher os dados do evento selecionado.
          * @param {string} eventTitle - Título do evento selecionado.
@@ -346,11 +526,11 @@
             // Define o título do evento no campo do modal
             document.getElementById('betEventTitle').value = eventTitle;
         }
-        
+
         // ==================================
         // Funções para Filtragem de Eventos
         // ==================================
-        
+
         /**
          * Função para filtrar os eventos com base no termo de busca fornecido.
          * @param {string} searchTerm - Termo de busca inserido pelo usuário.
@@ -358,30 +538,17 @@
         function filterEvents(searchTerm) {
             // Converte o termo de busca para letras minúsculas para facilitar a comparação
             const lowerCaseSearchTerm = searchTerm.toLowerCase();
-        
+
             // Filtra os eventos que contêm o termo de busca no título ou na descrição
             const filteredEvents = allEvents.filter(event =>
                 event.TITULO.toLowerCase().includes(lowerCaseSearchTerm) ||
                 event.DESCRICAO.toLowerCase().includes(lowerCaseSearchTerm)
             );
-        
+
             // Preenche os cartões de eventos disponíveis com os eventos filtrados
             fillAvailableEventCards(filteredEvents);
         }
-        
-        // ==================================
-        // Event Listeners
-        // ==================================
-        
-        // Adiciona um listener para o evento "input" na barra de pesquisa
-        document.getElementById('searchBar').addEventListener('input', (event) => {
-            // Obtém o termo de busca atual
-            const searchTerm = event.target.value;
-            
-            // Chama a função de filtragem com o termo de busca
-            filterEvents(searchTerm);
-        });
-        
+
         /**
          * Função para extrair categorias únicas dos eventos e preencher o dropdown,
          * tratando as categorias de forma insensível a maiúsculas e minúsculas.
@@ -389,10 +556,10 @@
          */
         function populateCategoryDropdown(events) {
             const categoryFilter = document.getElementById('categoryFilter');
-        
+
             // Cria um Map para rastrear categorias únicas de forma insensível a maiúsculas e minúsculas
             const categoryMap = new Map();
-        
+
             events.forEach(event => {
                 const categoryOriginal = event.CATEGORIA.trim();
                 const categoryLower = categoryOriginal.toLowerCase();
@@ -400,16 +567,16 @@
                     categoryMap.set(categoryLower, categoryOriginal);
                 }
             });
-        
+
             // Obtém as categorias únicas preservando a capitalização original da primeira ocorrência
             const uniqueCategories = Array.from(categoryMap.values());
-        
+
             // Opcional: Ordena as categorias alfabeticamente
             uniqueCategories.sort((a, b) => a.localeCompare(b));
-        
+
             // Limpa as opções atuais, exceto "Todas as Categorias"
             categoryFilter.innerHTML = '<option value="all">Todas as Categorias</option>';
-        
+
             // Adiciona cada categoria única como uma opção no dropdown
             uniqueCategories.forEach(category => {
                 const option = document.createElement('option');
@@ -419,32 +586,31 @@
                 categoryFilter.appendChild(option);
             });
         }
-        
-        
+
         /**
          * Função para exibir eventos filtrados por categoria.
          * @param {string} category - Categoria selecionada pelo usuário.
          */
         function displayEventsByCategory(category) {
             const eventsByCategoryContainer = document.getElementById('eventsByCategory');
-        
+
             // Limpa o conteúdo atual
             eventsByCategoryContainer.innerHTML = '';
-        
+
             // Filtra os eventos com base na categoria selecionada
             const filteredEvents = category === 'all' 
                 ? allEvents 
-                : allEvents.filter(event => event.CATEGORIA === category);
-        
+                : allEvents.filter(event => event.CATEGORIA.toLowerCase() === category);
+
             if (filteredEvents.length === 0) {
                 eventsByCategoryContainer.innerHTML = '<p>Nenhum evento encontrado para esta categoria.</p>';
                 return;
             }
-        
+
             // Itera sobre os eventos filtrados e cria os cartões
             filteredEvents.forEach(event => {
                 const valorCotaFormatado = parseFloat(event.VALOR_COTA).toFixed(2);
-        
+
                 const eventCard = 
                     `<div class="event-card">
                         <h3>${event.TITULO}</h3>
@@ -456,112 +622,39 @@
                             Apostar
                         </button>
                     </div>`;
-        
+
                 eventsByCategoryContainer.insertAdjacentHTML('beforeend', eventCard);
             });
         }
-        
+
+        // ================================
+        // Event Listeners
+        // ================================
+
+        // Adiciona um listener para o evento "input" na barra de pesquisa
+        document.getElementById('searchBar').addEventListener('input', (event) => {
+            // Obtém o termo de busca atual
+            const searchTerm = event.target.value;
+            
+            // Chama a função de filtragem com o termo de busca
+            filterEvents(searchTerm);
+        });
+
         // Adiciona um listener para mudanças no dropdown de categorias
         document.getElementById('categoryFilter').addEventListener('change', (event) => {
             const selectedCategory = event.target.value;
             displayEventsByCategory(selectedCategory);
         });
-        
-        
-        function formatDate(inputDate, format = 'DD/MM/YYYY HH:MI') {
-    const [date, time] = inputDate.split('T'); // Divide entre data e hora
-    const [year, month, day] = date.split('-'); // Divide a data no formato YYYY-MM-DD
-    if (time) {
-        const [hour, minute] = time.split(':'); // Divide o horário no formato HH:MM
-        return `${day}/${month}/${year} ${hour}:${minute}`;
-    }
-    return `${day}/${month}/${year}`; // Retorna apenas a data
-}
 
+        // ================================
+        // Inicialização das Funções
+        // ================================
 
-        
-        
-async function addNewEvent(event) {
-    event.preventDefault(); 
-
-    try {
-       
-        const Titulo = document.getElementById('eventTitle').value.trim();
-        const Descricao = document.getElementById('eventDescription').value.trim();
-        const Categoria = document.getElementById('eventCategory').value.trim();
-        const ValorCota = parseFloat(document.getElementById('eventCota').value);
-        const DataHoraInicio = formatDate(document.getElementById('eventStartTime').value);
-        const DataHoraFim = formatDate(document.getElementById('eventEndTime').value);
-        const DataEvento = formatDate(document.getElementById('eventDate').value);
-
-
-       
-        if (!Titulo || !Descricao || !Categoria || isNaN(ValorCota) || !DataHoraInicio || !DataHoraFim || !DataEvento) {
-            Swal.fire({
-                title: "Erro!",
-                text: "Por favor, preencha todos os campos corretamente.",
-                icon: "error"
-            });
-            return;
-        }
-
-   
-        const response = await fetch('http://127.0.0.1:5000/addNewEvent', {
-            method: 'POST',
-            headers: {
-                "Content-Type": "application/json"
-            },
-            credentials: 'include',
-            body: JSON.stringify({
-                titulo: Titulo,
-                descricao: Descricao,
-                categoria: Categoria,
-                valor_cota: ValorCota,
-                data_hora_inicio: DataHoraInicio,
-                data_hora_fim: DataHoraFim,
-                data_evento: DataEvento
-            })
-        });
-
-      
-       console.log(response);
-
-        if (response.ok) {
-            Swal.fire({
-                title: "Sucesso!",
-                text: "Evento criado com sucesso.",
-                icon: "success"
-            });
-            closeModal(); 
-        } else {
-            const mensagem = await response.text();
-            Swal.fire({
-                title: "Erro!",
-                text: mensagem || "Não foi possível criar o evento.",
-                icon: "error"
-            });
-        }
-    } catch (error) {
-        handleError(error, 'Houve um erro inesperado ao tentar criar o evento.');
-}
-}
-        
-        
-        
-        
         // Executa as funções de busca de eventos quando o DOM é completamente carregado
         document.addEventListener('DOMContentLoaded', () => {
             requestAvailableEvents();          // Busca e exibe os eventos disponíveis
             requestEventosMaisApostados();    // Busca e exibe os eventos mais apostados
         });
-        </script>
-        
-        <!-- Inclusão dos scripts adicionais necessários para o Bootstrap funcionar corretamente -->
-        
-        <!-- Popper.js é necessário para posicionamento de alguns componentes do Bootstrap, como tooltips e popovers -->
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
-        
-        <!-- Script principal do Bootstrap que habilita funcionalidades como modals, dropdowns, etc. -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+    </script>
 </body>
 </html>
