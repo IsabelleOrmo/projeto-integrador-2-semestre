@@ -21,7 +21,6 @@ async function signIn() {
         if (res.ok) {
             setTimeout(() => {
                     window.location.href = '../home/home.html';
-                
             }, 500);
         } else {
             const errorMessage = await res.text(); 

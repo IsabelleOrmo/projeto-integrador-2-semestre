@@ -82,6 +82,7 @@ export namespace AccountsHandler {
         const pEmail = req.get('email');
         const pPassword = req.get('password');
     
+
         if (pEmail && pPassword) {
             try {
                 const role = await verifyRole(pEmail);
@@ -89,7 +90,6 @@ export namespace AccountsHandler {
     
                 if (Array.isArray(result) && result.length > 0) { // Se houver resultado da função login
                     const token = result[0].TOKEN;
-    
                     res.setHeader('Set-Cookie', `token=${token}; Path=/; HttpOnly; Secure; SameSite=None`);
     
                     res.status(200).json({
@@ -355,4 +355,18 @@ export namespace AccountsHandler {
             res.status(400).send('Requisição inválida - Parâmetros faltando.');
         }
     };
+
+    export const logoutHandler: RequestHandler = async (req: Request, res: Response) => {
+        res.setHeader('Set-Cookie', 'token=; Path=/; HttpOnly; Secure; SameSite=None; Expires=Thu, 01 Jan 1970 00:00:00 GMT'); //data no passado dizendo que o cookie expirou
+        res.status(200).send("Logout realizado com sucesso.");
+    }
+
+    export const IsLogged: RequestHandler = async (req: Request, res: Response) =>{
+        const cookieValue = req.cookies.token;
+        if (cookieValue) {
+          res.status(200).send("Logado");
+        } else {
+          res.status(400).send('Logue para acessar!');
+        }
+    }
 }

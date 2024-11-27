@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Aguarda 500ms antes de chamar getHistory e getBalance para garantir que os cookies sejam carregados
+    
     setTimeout(() => {
         getHistory();
         getBalance();
@@ -377,3 +378,4 @@ function closeModal() {
         modalInstance.hide();
     }
 }
+

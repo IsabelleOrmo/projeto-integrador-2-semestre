@@ -99,6 +99,8 @@ routes.get('/getBalance', AccountsHandler.getBalanceHandler);
 routes.get('/getCartao', WalletHandler.getCartaoHandler);
 routes.get('/getPix', WalletHandler.getPixHandler);
 routes.get('/getContaBancaria', WalletHandler.getContaBancariaHandler);
+routes.get('/logout', AccountsHandler.logoutHandler);
+app.get('/isLogged', AccountsHandler.IsLogged);
 
 app.use(routes);
 
