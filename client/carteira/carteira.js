@@ -225,12 +225,77 @@ async function addFunds(event) {
 async function addCreditCard(event) {
     event.preventDefault();
 
+    // Obter os valores dos campos
+    const numeroCartao = document.getElementById('numero_cartao').value;
+    const nomeCartao = document.getElementById('nome_cartao').value;
+    let dataValidade = document.getElementById('data_validade').value;
+    const cvv = document.getElementById('cvv').value;
+
+    // Validação dos campos
+    if (!numeroCartao || !nomeCartao || !dataValidade || !cvv) {
+        return Swal.fire({
+            title: "Campos obrigatórios!",
+            text: "Todos os campos devem ser preenchidos.",
+            icon: "warning"
+        });
+    }
+
+    // Validação do número do cartão (aceita 13, 16 ou 19 dígitos)
+    if (!/^\d{13}(\d{3})?$/.test(numeroCartao)) {
+        return Swal.fire({
+            title: "Número de cartão inválido!",
+            text: "O número do cartão de crédito deve ter 13, 16 ou 19 dígitos.",
+            icon: "warning"
+        });
+    }
+
+    // Validação do CVV (3 dígitos)
+    if (!/^\d{3}$/.test(cvv)) {
+        return Swal.fire({
+            title: "CVV inválido!",
+            text: "O CVV deve ter 3 dígitos.",
+            icon: "warning"
+        });
+    }
+
+    // Validação da data de validade (formato MM/AAAA)
+    if (!/^\d{2}\/\d{4}$/.test(dataValidade)) {
+        return Swal.fire({
+            title: "Data de validade inválida!",
+            text: "A data de validade deve estar no formato MM/AAAA.",
+            icon: "warning"
+        });
+    }
+
+    // Validação do ano da data de validade (não pode ser menor que o ano atual)
+    const currentYear = new Date().getFullYear();
+    const year = parseInt(dataValidade.split('/')[1], 10);
+    if (year < currentYear) {
+        return Swal.fire({
+            title: "Ano de validade inválido!",
+            text: "O cartão não pode estar vencido.",
+            icon: "warning"
+        });
+    }
+
+    // Adiciona o dia "01" à data de validade para formatar como "DD/MM/AAAA"
+    dataValidade = `01/${dataValidade}`;
+
+    // Validação do nome no cartão (não pode estar vazio)
+    if (nomeCartao.trim() === "") {
+        return Swal.fire({
+            title: "Nome inválido!",
+            text: "O nome no cartão não pode estar vazio.",
+            icon: "warning"
+        });
+    }
+
     try {
         const data = {
-            numero_cartao: document.getElementById('numero_cartao').value,
-            nome_cartao: document.getElementById('nome_cartao').value,
-            data_validade: document.getElementById('data_validade').value,
-            cvv: document.getElementById('cvv').value
+            numero_cartao: numeroCartao,
+            nome_cartao: nomeCartao,
+            data_validade: dataValidade,
+            cvv: cvv
         };
 
         const response = await fetch('http://127.0.0.1:5000/addDadosBancarios', {
@@ -243,7 +308,7 @@ async function addCreditCard(event) {
         if (response.ok) {
             Swal.fire({
                 title: "Cartão cadastrado!",
-                text: "Cartão de crédito cadastrado com sucesso",
+                text: "Cartão de crédito cadastrado com sucesso.",
                 icon: "success"
             });
             closeModal();
@@ -262,33 +327,69 @@ async function addCreditCard(event) {
     }
 }
 
+
 // Função para adicionar uma chave Pix
 async function addPix(event) {
     event.preventDefault();
 
-    try {
-        const pix = document.getElementById('chave_pix').value;
+    // Obter o valor da chave Pix
+    const pix = document.getElementById('chave_pix').value.trim();
 
-        const response = await fetch('http://127.0.0.1:5000/addDadosBancarios', {
+    // Validação da chave Pix (não pode estar vazia)
+    if (!pix) {
+        return Swal.fire({
+            title: "Chave Pix inválida!",
+            text: "A chave Pix não pode estar vazia.",
+            icon: "warning"
+        });
+    }
+
+    // Validação do formato da chave Pix
+    // 1. CPF: 000.000.000-00
+    // 2. CNPJ: 00.000.000/0000-00
+    // 3. E-mail: exemplo@dominio.com
+    // 4. Telefone: (00) 00000-0000
+    // 5. Chave aleatória: Alfanumérica
+    const regexCpf = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/; // Formato CPF
+    const regexCnpj = /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/; // Formato CNPJ
+    const regexEmail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; // Formato E-mail
+    const regexTelefone = /^\(\d{2}\) \d{5}-\d{4}$/; // Formato Telefone
+    const regexChaveAleatoria = /^[a-zA-Z0-9]{26,35}$/; // Chave aleatória (26 a 35 caracteres alfanuméricos)
+
+    if (!regexCpf.test(pix) && !regexCnpj.test(pix) && !regexEmail.test(pix) && !regexTelefone.test(pix) && !regexChaveAleatoria.test(pix)) {
+        return Swal.fire({
+            title: "Chave Pix inválida!",
+            text: "A chave Pix informada não é válida. Verifique o formato e tente novamente.",
+            icon: "warning"
+        });
+    }
+
+    try {
+        const response = await fetch('http://127.0.0.1:5000/addDadosBancarios', {  
             method: 'POST',
             headers: { "Content-Type": "application/json" },
             credentials: 'include',
-            body: JSON.stringify({ chave_pix: pix })
+            body: JSON.stringify({
+                chave_pix: pix
+            })
         });
 
         if (response.ok) {
             Swal.fire({
                 title: "Chave Pix cadastrada!",
-                text: "Chave Pix cadastrada com sucesso",
+                text: "Chave Pix cadastrada com sucesso.",
                 icon: "success"
             });
             closeModal();
-        } else {
+        } else if (response.status === 400) {
             Swal.fire({
                 title: "Chave Pix já cadastrada!",
                 text: "Você já tem uma chave Pix cadastrada.",
                 icon: "error"
             });
+        } else {
+            const errorMessage = await response.text();
+            handleError(errorMessage, 'Erro ao cadastrar a chave Pix.');
         }
     } catch (error) {
         handleError(error);
@@ -299,15 +400,64 @@ async function addPix(event) {
 async function addContaBancaria(event) {
     event.preventDefault();
 
+    // Obtém os dados dos campos do formulário
+    const banco = document.getElementById('banco').value;
+    const agencia = document.getElementById('agencia').value;
+    const numero_conta = document.getElementById('numero_conta').value;
+    const tipo_conta = document.getElementById('tipo_conta').value;
+    const nome_titular = document.getElementById('nome_titular').value;
+
+    // Verificação de dados obrigatórios
+    if (!banco || !agencia || !numero_conta || !tipo_conta || !nome_titular) {
+        Swal.fire({
+            title: "Erro!",
+            text: "Todos os campos são obrigatórios.",
+            icon: "error"
+        });
+        return; // Interrompe a execução se algum campo estiver vazio
+    }
+
+    // Verificação do número da conta e agência (se necessário)
+    if (!/^\d+$/.test(agencia)) {
+        Swal.fire({
+            title: "Erro!",
+            text: "Agência deve ser um número válido.",
+            icon: "error"
+        });
+        return;
+    }
+
+    if (!/^\d+$/.test(numero_conta)) {
+        Swal.fire({
+            title: "Erro!",
+            text: "Número da conta deve ser um número válido.",
+            icon: "error"
+        });
+        return;
+    }
+
+    // Verificação do tipo de conta (caso haja tipos específicos)
+    const tiposValidos = ["corrente", "poupanca", "outro"]; // Exemplo de tipos de conta válidos
+    if (!tiposValidos.includes(tipo_conta.toLowerCase())) {
+        Swal.fire({
+            title: "Erro!",
+            text: "Tipo de conta inválido. Escolha entre 'corrente', 'poupanca' ou 'outro'.",
+            icon: "error"
+        });
+        return;
+    }
+
+    // Prepara os dados a serem enviados
     const data = {
-        banco: document.getElementById('banco').value,
-        agencia: document.getElementById('agencia').value,
-        numero_conta: document.getElementById('numero_conta').value,
-        tipo_conta: document.getElementById('tipo_conta').value,
-        nome_titular: document.getElementById('nome_titular').value
+        banco: banco,
+        agencia: agencia,
+        numero_conta: numero_conta,
+        tipo_conta: tipo_conta,
+        nome_titular: nome_titular
     };
 
     try {
+        // Realiza a requisição para adicionar os dados bancários
         const response = await fetch('http://127.0.0.1:5000/addDadosBancarios', {
             method: 'POST',
             headers: { "Content-Type": "application/json" },
@@ -315,25 +465,28 @@ async function addContaBancaria(event) {
             body: JSON.stringify(data)
         });
 
+        // Log da resposta para depuração
+        console.log(response);
+
+        // Verifica se a resposta foi bem-sucedida
         if (response.ok) {
             Swal.fire({
                 title: "Conta bancária cadastrada!",
-                text: "Conta bancária cadastrada com sucesso",
+                text: "Conta bancária cadastrada com sucesso.",
                 icon: "success"
             });
-            closeModal();
+            closeModal(); // Fecha o modal após sucesso
         } else {
             Swal.fire({
-                title: "Conta bancária já cadastrada!",
+                title: "Erro!",
                 text: "Você já tem uma conta bancária cadastrada.",
                 icon: "error"
             });
         }
     } catch (error) {
-        handleError(error);
+        handleError(error); // Função para tratar erros
     }
 }
-
 // Função para fechar o modal de cadastro
 function closeModal() {
     const modalElement = document.getElementById('cadastroModal');
