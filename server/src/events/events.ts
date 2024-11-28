@@ -698,7 +698,7 @@ export namespace EventsHandler {
         }
     }
 
-    async function getUserEvents(userId: string) {
+    async function getUserEvents(userId: number) {
         OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
     
         const connection = await OracleDB.getConnection({
@@ -709,18 +709,19 @@ export namespace EventsHandler {
     
         try {
             const events = await connection.execute(
-                `SELECT  
+                `SELECT 
                     titulo, 
                     descricao,  
                     TO_CHAR(data_evento, 'YYYY-MM-DD') AS data_evento, 
-                    status_evento 
+                    status_evento,
+                    id_evento 
                 FROM 
                     EVENTS 
                 WHERE 
-                    id_usuario = :userId
-                    status_evento IN ('APROVADO','PENDENTE')`,
-                { userId } // Parâmetro para evitar SQL injection
-            );
+                    id_usuario = :userId 
+                    AND status_evento IN ('APROVADO','PENDENTE')`, // Adicionado o operador AND
+                [userId]
+            );            
     
             return events.rows;
         } catch (error) {
@@ -747,7 +748,7 @@ export namespace EventsHandler {
     }
 
     export const deleteEventHandler: RequestHandler = async (req: Request, res: Response) =>{
-        const token = req.get('token');
+        const token = req.cookies.token;
         const id_evento = req.get("id_evento");
 
         if (typeof token !== 'string') {
@@ -787,17 +788,19 @@ export namespace EventsHandler {
             res.status(403).send('Acesso negado'); 
         }
     }         
+
     
     export const getUserEventsHandler: RequestHandler = async (req: Request, res: Response) => {
+        const token = req.cookies.token;
         try {
-            const userId = req.params.userId; // Obtém o ID do usuário dos parâmetros da URL
-    
-            if (!userId) {
+            const id_usuario = await userId(token);
+            console.log(id_usuario);
+            if (!id_usuario) {
                 res.status(400).send('ID do usuário não fornecido.');
                 return; // Finaliza a execução da função
             }
     
-            const events = await getUserEvents(userId);
+            const events = await getUserEvents(id_usuario);
     
             if (Array.isArray(events) && events.length > 0) {
                 res.status(200).json(events);

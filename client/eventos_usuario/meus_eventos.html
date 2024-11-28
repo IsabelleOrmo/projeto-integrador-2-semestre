@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Mingzat&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>
 </head>
 <body>
   <nav class="navbar navbar-expand-lg" style="background-color: #A5D4FB; padding: 0;">
@@ -77,74 +78,9 @@
     <ul class="event-list" id="event-list">
       <!-- Os eventos serão renderizados aqui -->
     </ul>
-    <a href="index.html" class="back-link">Voltar para a página inicial</a>
   </div>
 
-  <script>
-  // Função para buscar eventos criados pelo usuário
-  async function fetchEventosCriados(userId) {
-    try {
-      const response = await fetch(`http://localhost:5000/userEvents/${userId}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json"
-        }
-      });
-
-      if (response.ok) {
-        const eventos = await response.json();
-        return eventos;
-      } else {
-        console.error("Erro ao buscar eventos:", response.status);
-        return [];
-      }
-    } catch (error) {
-      console.error("Erro ao conectar com o servidor:", error);
-      return [];
-    }
-  }
-
-  // Função para renderizar os eventos na lista
-  async function renderEventos(userId) {
-    const eventList = document.getElementById("event-list");
-    const eventosCriados = await fetchEventosCriados(userId);
-
-    // Limpa a lista de eventos antes de renderizar
-    eventList.innerHTML = "";
-
-    if (eventosCriados.length === 0) {
-      eventList.innerHTML = "<p>Nenhum evento criado até o momento.</p>";
-      return;
-    }
-
-    eventosCriados.forEach(evento => {
-      const eventItem = document.createElement("li");
-      eventItem.className = "event-item";
-
-      eventItem.innerHTML = `
-        <h2>${evento.TITULO}</h2>
-        <p><strong>Data:</strong> ${evento.DATA_EVENTO}</p>
-        <p>${evento.DESCRICAO}</p>
-        <p><strong>Data:</strong> ${evento.STATUS_EVENTO}</p>
-        <div class="row">
-          <div class="col-2 offset-0">
-            <button type="button" class="btn btn-success btn-large" style="margin-left: 20px; margin-top: 15px;">
-              Excluir Evento
-            </button>
-          </div>
-          <div class="col-10">
-              <!-- Espaço reservado para o restante do conteúdo -->
-          </div>
-        </div>
-      `;
-
-      eventList.appendChild(eventItem);
-    });
-  }
-
-  // Chama a função para renderizar os eventos com o ID do usuário
-  const userId = "1"; // Substitua pelo ID real do usuário
-  renderEventos(userId);
-  </script>
+<script src="./meus_eventos.js"></script>
+<script src="../cookies.js"></script>
 </body>
 </html>
