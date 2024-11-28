@@ -303,7 +303,7 @@ export namespace EventsHandler {
                     EVENTS 
                 WHERE 
                     status_evento = 'APROVADO' 
-                    AND data_hora_fim > SYSDATE`
+                    AND data_hora_fim > SYSDATE AND data_hora_inicio < SYSDATE`
             );
 
             return events.rows;
@@ -525,14 +525,7 @@ export namespace EventsHandler {
     export const addNewEventHandler: RequestHandler = async (req: Request, res: Response) => {
         const token = req.cookies.token;
         const { titulo, descricao, categoria, valor_cota, data_hora_inicio, data_hora_fim, data_evento } = req.body;
-        const verificaDataInicio = await verifyDate(data_hora_inicio);
-        const verificaDataFim = await verifyDate(data_hora_fim);
-        const verificaData = await verifyDate(data_evento);
 
-        if(verificaData === false || verificaDataFim === false || verificaDataInicio === false){
-            res.status(400).send('Requisição inválida - datas inválidas.');
-            return; 
-        }
 
         if (typeof token !== 'string' && !token) {
             res.status(400).send('Requisição inválida - tente logar novamente.');

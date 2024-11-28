@@ -88,18 +88,17 @@ export namespace AccountsHandler {
                 const role = await verifyRole(pEmail);
                 const result = await login(pEmail, pPassword);
     
+                if (Number(role)==2) {
+                    res.status(404).send("Email ou senha não encontrados. Não tem conta? Cadastre-se.");
+                    return;
+                }
                 if (Array.isArray(result) && result.length > 0) { // Se houver resultado da função login
                     const token = result[0].TOKEN;
                     res.setHeader('Set-Cookie', `token=${token}; Path=/; HttpOnly; Secure; SameSite=None`);
     
-                    res.status(200).json({
-                        message: "Bem-vindo administrador.",
-                        role: "Administrador",
-                    });
                 } else {
-                    res.status(404).json({
-                        message: "Email ou senha não encontrados. Não tem conta? Cadastre-se.",
-                    });
+                    res.status(404).send("Email ou senha não encontrados. Não tem conta? Cadastre-se.");
+                    return;
                 }
             } catch (error) {
                 console.error("Erro ao realizar login:", error);

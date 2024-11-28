@@ -24,7 +24,11 @@ async function signIn() {
             }, 500);
         } else {
             const errorMessage = await res.text(); 
-           alert(errorMessage);
+            Swal.fire({
+                title: "Erro!",
+                text: errorMessage,
+                icon: "error"
+            });
         }
     }
 }

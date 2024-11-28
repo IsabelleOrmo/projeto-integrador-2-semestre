@@ -118,6 +118,21 @@ export namespace ClosingBetsHandler {
             [valor, id_usuario]
         );
 
+    
+        await connection.commit();
+        await connection.close();
+    }
+
+    
+    async function updateTransacao(id_usuario: number, id_evento:number, valor: number) {
+        OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
+    
+        const connection = await OracleDB.getConnection({
+            user: process.env.ORACLE_USER,
+            password: process.env.ORACLE_PASSWORD,
+            connectString: process.env.ORACLE_CONN_STR
+        });
+    
         await connection.execute(
             `INSERT INTO TRANSACAO (ID_TRANSACAO, ID_USUARIO, ID_EVENTO, VALOR, TIPO, DATA_TRANSACAO) 
              VALUES (SEQ_TRANSACAO.NEXTVAL, :id_usuario, :id_evento, :valor, 'DEPÓSITO DE APOSTA', SYSDATE)`,  
@@ -127,6 +142,8 @@ export namespace ClosingBetsHandler {
         await connection.commit();
         await connection.close();
     }
+
+
 
     async function getWinners(id_evento: number, decisao_aposta: string): Promise<Bet[]> {
         OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
@@ -304,7 +321,9 @@ export namespace ClosingBetsHandler {
                             return; 
                         }
                         const valorRetorno = currentlyWallet + valorUp + valor;
-                        await updateCarteira(id, eventoId,valorRetorno);
+                        const valorTransacao = valorUp + valor;
+                        await updateCarteira(id, eventoId, valorRetorno);
+                        await updateTransacao(id, eventoId, valorTransacao);
                     }
                 }
 
@@ -351,7 +370,9 @@ export namespace ClosingBetsHandler {
                             return; 
                         }
                         const valorRetorno = currentlyWallet + valorUp + valor;
-                        await updateCarteira(id, eventoId,valorRetorno);
+                        const valorTransacao = valorUp + valor;
+                        await updateCarteira(id, eventoId, valorRetorno);
+                        await updateTransacao(id, eventoId, valorTransacao);
                     }
                 }
             }

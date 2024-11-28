@@ -57,7 +57,7 @@ export namespace BetHandler {
         } finally {
             await connection.close(); 
         }
-    }  
+    }
 
     async function valorApostado(id_usuario: number, id_evento: number, valor: number) {
         OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
@@ -245,20 +245,27 @@ export namespace BetHandler {
     
 
     export const betOnEventHandler: RequestHandler = async (req: Request, res: Response) => {
-        const token = req.cookies.token;
-        const id_evento = req.get('id_evento');
+        console.log('Headers recebidos:', req.headers); // Log dos cabeçalhos
+        console.log('Body recebido:', req.body);       // Log do corpo da requisição
+    
+        const token = req.cookies?.token;
+        const id_evento = req.get('id_evento'); // Cabeçalho `id_evento`
         const { cotas_qntd, tipo } = req.body;
-        var tipoUpper = tipo.toUpperCase( );
-        
-        if (typeof token !== 'string') {
+    
+        console.log('Token:', token);
+        console.log('id_evento:', id_evento);
+        console.log('cotas_qntd:', cotas_qntd, 'tipo:', tipo);
+    
+        if (!token) {
             res.status(400).send('Requisição inválida - tente logar novamente.');
             return; 
         }
     
-        if (!cotas_qntd || cotas_qntd == 0 || !tipoUpper || !id_evento) {
-            res.status(400).send('Requisição inválida - Parâmetros faltando.');
+        if (!id_evento || !cotas_qntd || cotas_qntd <= 0 || !tipo) {
+            res.status(400).send('Requisição inválida - Parâmetros faltando ou inválidos.');
             return; 
         }
+    
 
         const eventoId = parseInt(id_evento, 10);
         const eventoAprovado = await getEvent(eventoId);
@@ -315,7 +322,7 @@ export namespace BetHandler {
     
                 const valor_carteira = valorAtualCarteira - valor_final_aposta;
                 
-                await betOnEvent(id_usuario, eventoId, valor_final_aposta, tipoUpper);
+                await betOnEvent(id_usuario, eventoId, valor_final_aposta, tipo);
                 await valorApostado(id_usuario, eventoId, valor_carteira);
     
                 res.status(201).send('Aposta realizado com sucesso.'); 
@@ -326,7 +333,11 @@ export namespace BetHandler {
             }
         } else {
             res.status(404).send("Evento não encontrado");
-        }     
+        }   
+        
+        console.log('Headers:', req.headers);
+        console.log('Body:', req.body);
+
 }
 
 }
