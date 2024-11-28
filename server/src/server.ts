@@ -17,7 +17,7 @@ const port = 5000;
 const app = express();
 const routes = Router();
 
-const allowedOrigins = ['http://localhost:5501', 'http://127.0.0.7:5501'];
+const allowedOrigins = ['http://localhost:5503', 'http://127.0.0.7:5503'];
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) {
