@@ -61,6 +61,13 @@ body {
     flex-direction: column;
     align-items: center;
     text-align: center;
+    min-width: 50px; /* Mantém um tamanho mínimo consistente para ícone e texto */
+    transition: transform 0.3s; /* Transição suave para o hover */
+    cursor: pointer; /* Muda o cursor para indicar que o ícone é clicável */
+}
+
+.icon-container:hover {
+    transform: scale(1.1); /* Aumenta o tamanho do ícone ao passar o mouse */
 }
 
 .icon-container svg {
@@ -69,10 +76,20 @@ body {
     fill: currentColor;
 }
 
+.icon-container {
+    min-width: 50px; /* Mantém um tamanho mínimo consistente para o ícone e texto */
+}
+
 .icon-container div {
     font-size: 12px;
-    margin-top: 5px; 
+    margin-top: 5px;
+    transition: font-weight 0.3s; /* Transição suave para o peso da fonte */
 }
+
+.icon-container:hover div {
+    font-weight: bold; /* Deixa o texto em negrito ao passar o mouse */
+}
+
 
 /* Responsividade */
 @media (max-width: 768px) {

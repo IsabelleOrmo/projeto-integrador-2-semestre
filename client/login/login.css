@@ -18,9 +18,31 @@ body, html {
     padding: 20px;
     background-color: #ffffff;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
+    border-radius: 15px;
     text-align: center;
   }
+  
+  .brand-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 3rem; /* Tamanho grande */
+    color: #2F7580; /* Verde vibrante */
+    text-transform: uppercase; /* Deixa o texto todo maiúsculo */
+    letter-spacing: 1px; /* Espaçamento entre as letras */
+    text-align: center; /* Centraliza o texto */
+    margin: 20px 0;
+  }
+
+  .brand-title-gradient {
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-align: center;
+    background: linear-gradient(90deg, #2F7580, #1b3c41);
+    -webkit-background-clip: text; /* Propriedade com prefixo */
+    color: transparent; /* Faz o texto usar o gradiente */
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+  }
+
   
   /* Logo */
   .logo {
@@ -110,5 +132,5 @@ body, html {
   
   .cadastro a:hover {
     color: #006d6f;
-    text-decoration: underline;
+    text-decoration: underline;
 }
